@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.mirea.server_coursework.model.User;
 
+import javax.servlet.http.HttpServletRequest;
 import java.sql.Date;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -38,6 +39,10 @@ public class JwtTokenProvider {
                 .build()
                 .parseClaimsJws(token);
         return claimsJws.getBody().getSubject();
+    }
+
+    public String resolveToken(HttpServletRequest request) {
+        return request.getHeader("Authorization");
     }
 
     public boolean validateJwtToken(String authToken) {

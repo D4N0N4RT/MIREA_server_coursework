@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.mirea.server_coursework.dto.GetPostDTO;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -57,4 +58,11 @@ public class Post {
 
     @Enumerated(EnumType.STRING)
     private Category category;
+
+    public GetPostDTO toDTO() {
+        return GetPostDTO.builder().id(this.id).title(this.title).category(this.category)
+                .price(this.price).userEmail(this.user.getUsername())
+                .rating(this.rating).postingDate(this.postingDate)
+                .description(this.description).build();
+    }
 }

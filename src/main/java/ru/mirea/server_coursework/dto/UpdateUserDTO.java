@@ -5,7 +5,7 @@ import lombok.Getter;
 import javax.validation.constraints.Size;
 
 @Getter
-public class UpdateUserDTO {
+public class UpdateUserDTO implements IUserDTO{
     @Size(min = 1, max = 255, message = "Пароль не может отсутствовать или превышать 255 символов")
     private String password;
     @Size(min = 1, max = 50, message = "Имя не может отсутствовать или превышать 50 символов")

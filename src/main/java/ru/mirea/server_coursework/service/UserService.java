@@ -8,10 +8,14 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.mirea.server_coursework.dto.IUserDTO;
+import ru.mirea.server_coursework.exception.PasswordCheckException;
 import ru.mirea.server_coursework.model.User;
 import ru.mirea.server_coursework.repository.UserRepository;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Service
@@ -58,6 +62,20 @@ public class UserService implements UserDetailsService {
     public void update(User user) {
         log.info("Update profile info of user with username {}", user.getUsername());
         userRepository.save(user);
+    }
+
+    public String checkDTO(IUserDTO dto) throws PasswordCheckException {
+        if (dto.getPassword() != null) {
+            String CHECK = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=\\S+)[a-zA-Z0-9_-]{8,}$";
+            Pattern pattern = Pattern.compile(CHECK);
+            Matcher matcher = pattern.matcher(dto.getPassword());
+            if (!matcher.matches()) {
+                throw new PasswordCheckException("Пароль должен содержать как миниму одну строчную букву, " +
+                        "одну заглавную букву и одну цифру, а также быть не менне 8 символов в длину.");
+            }
+            return passwordEncoder.encode(dto.getPassword());
+        }
+        return null;
     }
 }
 
