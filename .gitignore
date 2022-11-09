@@ -36,3 +36,6 @@ build/
 mvnw/
 mvnw
 mvnw.cmd
+
+**/*.jar
+**/db_data
