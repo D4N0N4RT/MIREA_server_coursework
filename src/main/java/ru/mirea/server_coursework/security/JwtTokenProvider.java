@@ -14,7 +14,7 @@ import ru.mirea.server_coursework.model.User;
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Date;
 import java.time.Instant;
-import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 @Component
 @AllArgsConstructor
@@ -27,8 +27,8 @@ public class JwtTokenProvider {
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(Date.from(Instant.now()))
-                .setExpiration(Date.from(Instant.from(LocalDate.now()
-                                .plusDays(jwtConfig.getTokenExpiresAfterDays()))))
+                .setExpiration(
+                        Date.from(Instant.now().plus(jwtConfig.getTokenExpiresAfterDays(), ChronoUnit.DAYS)))
                 .signWith(jwtConfig.getSecretKeyBean())
                 .compact();
     }

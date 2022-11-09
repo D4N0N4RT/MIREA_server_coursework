@@ -37,6 +37,7 @@ public class User implements UserDetails {
             allocationSize = 1
     )
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "usersIdSeq")
+    @Column(name = "id", updatable = false)
     private Long id;
 
     @Column(name = "email", unique = true)

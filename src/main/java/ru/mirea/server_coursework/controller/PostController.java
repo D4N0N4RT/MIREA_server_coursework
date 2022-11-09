@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.mirea.server_coursework.dto.CreatePostDTO;
 import ru.mirea.server_coursework.dto.GetPostDTO;
@@ -36,6 +37,7 @@ import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Controller
+@RequestMapping("/posts")
 public class PostController {
     private final PostService postService;
     private final UserService userService;
@@ -75,7 +77,7 @@ public class PostController {
     @GetMapping("/sort")
     public ResponseEntity<?> getAllSort(@RequestParam(name="field") @NotBlank String field,
                                         @RequestParam(name="order") @NotBlank String order) {
-        List<Post> posts = postService.findAllFilter(field, order);
+        List<Post> posts = postService.findAllSorted(field, order);
         List<GetPostDTO> dtos = posts.stream().map(Post::toDTO).collect(Collectors.toList());
         return new ResponseEntity<>(dtos, HttpStatus.FOUND);
     }

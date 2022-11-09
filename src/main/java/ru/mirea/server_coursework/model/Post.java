@@ -34,11 +34,12 @@ public class Post {
             allocationSize = 1
     )
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "postsIdSeq")
+    @Column(name = "id", updatable = false)
     private Long id;
 
     @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="user_email")
+    @JoinColumn(name="user_id")
     private User user;
 
     private String title;

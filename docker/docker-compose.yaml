@@ -6,9 +6,9 @@ services:
     ports:
       - '5432:5432'
     environment:
-      - POSTGRES_USER=senla_user
-      - POSTGRES_PASSWORD=senla_pass
-      - POSTGRES_DB=finale
+      - POSTGRES_USER=db_user
+      - POSTGRES_PASSWORD=db_pass
+      - POSTGRES_DB=courseworkDB
     volumes:
       - ./db_data:/var/lib/postgresql/data
       - ./sql:/docker-entrypoint-initdb.d
@@ -20,12 +20,12 @@ services:
   app:
     image: adoptopenjdk:11-jre-hotspot
     volumes:
-      - ./app/finale-0.1.jar:/app.jar
+      - ./app/server_coursework-0.1.jar:/app.jar
     command: java -jar app.jar
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/finale
-      - SPRING_DATASOURCE_USERNAME=senla_user
-      - SPRING_DATASOURCE_PASSWORD=senla_pass
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/courseworkDB
+      - SPRING_DATASOURCE_USERNAME=db_user
+      - SPRING_DATASOURCE_PASSWORD=db_pass
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
     ports:
       - '8000:8000'

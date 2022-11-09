@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.mirea.server_coursework.dto.IUserDTO;
 import ru.mirea.server_coursework.exception.PasswordCheckException;
 import ru.mirea.server_coursework.model.User;
-import ru.mirea.server_coursework.repository.UserRepository;
+import ru.mirea.server_coursework.repository.user.UserRepository;
 
 import java.util.List;
 import java.util.regex.Matcher;
@@ -39,17 +39,17 @@ public class UserService implements UserDetailsService {
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         log.info("Find user with username {}", username);
-        if (userRepository.findByUsername(username).isEmpty()) {
+        if (userRepository.findByUsername(username) == null) {
             log.warn("There is no user with username - {}", username);
             throw new UsernameNotFoundException("Пользователя с таким именем не существует");
         }
-        return userRepository.findByUsername(username).get();
+        return userRepository.findByUsername(username);
     }
 
     @Transactional
     public void create(User user) {
         log.info("Create new user with username {}", user.getUsername());
-        userRepository.save(user);
+        userRepository.create(user);
     }
 
     @Transactional
@@ -61,7 +61,7 @@ public class UserService implements UserDetailsService {
     @Transactional
     public void update(User user) {
         log.info("Update profile info of user with username {}", user.getUsername());
-        userRepository.save(user);
+        userRepository.create(user);
     }
 
     public String checkDTO(IUserDTO dto) throws PasswordCheckException {
