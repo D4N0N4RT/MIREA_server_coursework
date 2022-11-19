@@ -29,12 +29,11 @@ import java.time.LocalDate;
 @Builder
 public class Post {
     @Id
-    @SequenceGenerator(name = "postsIdSeq",
-            sequenceName = "posts_id_seq",
-            allocationSize = 1
-    )
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "postsIdSeq")
-    @Column(name = "id", updatable = false)
+    /*@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "posts_id_seq")
+    @SequenceGenerator(name = "posts_id_seq", sequenceName = "posts_id_seq",
+            allocationSize = 0
+    )*/
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @JsonBackReference
@@ -59,6 +58,9 @@ public class Post {
 
     @Enumerated(EnumType.STRING)
     private Category category;
+
+    @Column(name="buyer_email")
+    private String buyerEmail;
 
     public GetPostDTO toDTO() {
         return GetPostDTO.builder().id(this.id).title(this.title).category(this.category)

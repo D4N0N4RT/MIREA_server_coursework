@@ -32,6 +32,7 @@ CREATE TABLE IF NOT EXISTS users
     "name" VARCHAR(50),
     surname VARCHAR(75),
     phone VARCHAR(10),
+    city VARCHAR(50),
     rating INTEGER,
     "role" VARCHAR(25),
     activity BOOLEAN
@@ -53,6 +54,7 @@ CREATE TABLE IF NOT EXISTS posts
     posting_date DATE,
     "category" VARCHAR(50),
     rating INTEGER,
+    buyer_email VARCHAR(50),
     FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
@@ -62,7 +64,7 @@ ALTER SEQUENCE posts_id_seq OWNED BY posts.id;
 
 CREATE TABLE IF NOT EXISTS messages
 (
-    id BIGSERIAL NOT NULL PRIMARY KEY,
+    id BIGSERIAL NOT NULL PRIMARY KEY ,
     sender_id BIGSERIAL,
     receiver_id BIGSERIAL,
     "content" TEXT,

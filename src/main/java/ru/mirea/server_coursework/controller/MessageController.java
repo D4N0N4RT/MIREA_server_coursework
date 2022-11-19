@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import ru.mirea.server_coursework.controller.api.MessageApi;
 import ru.mirea.server_coursework.dto.MessageDTO;
 import ru.mirea.server_coursework.model.Message;
 import ru.mirea.server_coursework.model.User;
@@ -24,8 +25,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/messages")
-public class MessageController {
+public class MessageController implements MessageApi {
     private final MessageService messageService;
     private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
@@ -37,7 +37,6 @@ public class MessageController {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    @GetMapping("")
     public ResponseEntity<?> getConversation(@RequestParam(name="email") @NotBlank String email,
                                              HttpServletRequest request) {
         String token = jwtTokenProvider.resolveToken(request);
@@ -50,7 +49,6 @@ public class MessageController {
         return new ResponseEntity<>(conversation, HttpStatus.FOUND);
     }
 
-    @PostMapping("")
     public ResponseEntity<?> sendMessage(@RequestParam(name="email") @NotBlank String email,
                                          @RequestBody @Valid @NotBlank(message = "Сообщение не может быть пустым") String content,
                                          HttpServletRequest request) {

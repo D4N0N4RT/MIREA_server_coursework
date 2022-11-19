@@ -26,12 +26,11 @@ import java.time.LocalDateTime;
 @Builder
 public class Message {
     @Id
-    @SequenceGenerator(name = "messagesIdSeq",
-            sequenceName = "messages_id_seq",
-            allocationSize = 1
-    )
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "messagesIdSeq")
-    @Column(name = "id", updatable = false)
+    /*@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "messages_id_seq")
+    @SequenceGenerator(name = "messages_id_seq", sequenceName = "messages_id_seq",
+            allocationSize = 0
+    )*/
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

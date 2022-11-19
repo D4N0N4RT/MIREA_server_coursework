@@ -9,9 +9,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import ru.mirea.server_coursework.controller.api.AuthApi;
 import ru.mirea.server_coursework.dto.AuthRequestDTO;
 import ru.mirea.server_coursework.dto.AuthResponseDTO;
 import ru.mirea.server_coursework.dto.RegisterUserDTO;
@@ -28,8 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 @Controller
-@RequestMapping("/auth")
-public class AuthController {
+public class AuthController implements AuthApi {
 
     private final AuthenticationManager manager;
     private final UserService userService;
@@ -48,7 +49,6 @@ public class AuthController {
         this.userMapper = userMapper;
     }
 
-    @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody @Valid RegisterUserDTO userDTO) throws DuplicateUsernameException, PasswordCheckException {
         try {
             userService.loadUserByUsername(userDTO.getUsername());
@@ -62,7 +62,6 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/login")
     public ResponseEntity<?> authenticate(@RequestBody @Valid AuthRequestDTO request) throws UsernameNotFoundException {
         String username = request.getUsername();
         manager.authenticate(new UsernamePasswordAuthenticationToken(username, request.getPassword()));
@@ -74,7 +73,6 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/edit")
     public ResponseEntity<?> editProfile(@RequestBody @Valid UpdateUserDTO dto, HttpServletRequest request)
             throws PasswordCheckException {
         String pass = userService.checkDTO(dto);
@@ -89,7 +87,6 @@ public class AuthController {
         return new ResponseEntity<>("Данные вашего профиля обновлены", HttpStatus.OK);
     }
 
-    @PostMapping("/logout")
     public void logout(HttpServletRequest request, HttpServletResponse response) {
         SecurityContextLogoutHandler handler = new SecurityContextLogoutHandler();
         handler.logout(request, response, null);
