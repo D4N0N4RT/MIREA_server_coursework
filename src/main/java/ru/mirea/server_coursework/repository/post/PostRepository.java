@@ -33,7 +33,7 @@ public class PostRepository extends AbstractRepository<Post, Long> {
         CriteriaUpdate<Post> update = builder.createCriteriaUpdate(Post.class);
         Root<Post> root = update.from(Post.class);
 
-        update.set("rating", rating).where(builder.equal(root.get("user"), user));
+        update.set("sellerRating", rating).where(builder.equal(root.get("user"), user));
 
         entityManager.createQuery(update).executeUpdate();
     }
@@ -49,14 +49,6 @@ public class PostRepository extends AbstractRepository<Post, Long> {
     public List<Post> findAllBySold(boolean sold, Sort sort) {
         return findAll(hasSold(sold), sort);
     }
-
-    /*List<Post> findAllBySoldOrderByPriceDescPromotionDescRatingDesc(boolean sold);
-
-    List<Post> findAllBySoldOrderByPriceAscPromotionDescRatingDesc(boolean sold);
-
-    List<Post> findAllBySoldOrderByPostingDateDescPromotionDescRatingDesc(boolean sold);
-
-    List<Post> findAllBySoldOrderByPostingDateAscPromotionDescRatingDesc(boolean sold);*/
 
     public List<Post> findBySoldAndPriceLessThan(boolean sold, double price, Sort sort) {
         return findAll(hasSold(sold).and(hasLowerPrice(price)), sort);

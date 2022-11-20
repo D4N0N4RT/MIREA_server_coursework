@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.mirea.server_coursework.dto.MessageDTO;
+import ru.mirea.server_coursework.mapper.MessageMapper;
 import ru.mirea.server_coursework.model.Message;
 import ru.mirea.server_coursework.model.User;
 import ru.mirea.server_coursework.repository.message.MessageRepository;
@@ -15,17 +17,18 @@ import java.util.List;
 @Service
 public class MessageService {
     private final MessageRepository messageRepository;
+    private final MessageMapper messageMapper;
 
     @Autowired
-    public MessageService(MessageRepository messageRepository) {
+    public MessageService(MessageRepository messageRepository, MessageMapper messageMapper) {
         this.messageRepository = messageRepository;
+        this.messageMapper = messageMapper;
     }
 
     @Transactional(readOnly = true)
-    public List<Message> getConversation(User user1, User user2) {
+    public List<MessageDTO> getConversation(User user1, User user2) {
         log.info("Get conversation between user {} and user {}", user1.getUsername(), user2.getUsername());
-        List<Message> messages = messageRepository.findConversation(user1, user2, Sort.by("time"));
-        return messages;
+        return messageMapper.toMessageDto(messageRepository.findConversation(user1, user2, Sort.by("time")));
     }
 
     @Transactional

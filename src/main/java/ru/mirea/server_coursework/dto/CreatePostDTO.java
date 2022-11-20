@@ -11,6 +11,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Getter
 public class CreatePostDTO {
@@ -24,10 +25,23 @@ public class CreatePostDTO {
     private double price;
     @NotNull(message = "Объявление не может быть без категории")
     private Category category;
+    private Boolean exchanged;
 
     public Post toPost(User user) {
-        return Post.builder().title(title).description(description).price(price)
-                .promotion(0).sold(false).category(category).user(user)
-                .rating(user.getRating()).postingDate(LocalDate.now()).build();
+        if (Objects.isNull(exchanged))
+            exchanged = false;
+        return Post.builder()
+                .title(title)
+                .description(description)
+                .price(price)
+                .promotion(0)
+                .sold(false)
+                .category(category)
+                .user(user)
+                .city(user.getCity())
+                .exchanged(exchanged)
+                .sellerRating(user.getRating())
+                .postingDate(LocalDate.now())
+                .build();
     }
 }

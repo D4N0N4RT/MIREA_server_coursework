@@ -26,10 +26,6 @@ import java.time.LocalDateTime;
 @Builder
 public class Message {
     @Id
-    /*@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "messages_id_seq")
-    @SequenceGenerator(name = "messages_id_seq", sequenceName = "messages_id_seq",
-            allocationSize = 0
-    )*/
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -45,10 +41,4 @@ public class Message {
 
     private LocalDateTime time;
 
-    public MessageDTO toDTO() {
-        return MessageDTO.builder().sender(this.sender.getName() + ' ' + this.sender.getSurname()
-                        + " (" + this.sender.getUsername() + ')').receiver(this.receiver.getName()
-                        + ' ' + this.receiver.getSurname() + " (" + this.receiver.getUsername() + ')')
-                .content(this.content).time(this.time).build();
-    }
 }

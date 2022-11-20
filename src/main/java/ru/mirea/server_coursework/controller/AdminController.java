@@ -4,8 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.mirea.server_coursework.controller.api.AdminApi;
@@ -41,7 +39,7 @@ public class AdminController implements AdminApi {
     }
 
     public ResponseEntity<?> deletePost(@PathVariable(name = "id") long id) throws WrongIdException {
-        Post post = postService.findById(id).orElseThrow(() -> new WrongIdException("Неправльный id"));
+        Post post = postService.findById(id);
         postService.delete(post);
         return new ResponseEntity<>("Объявление удалено", HttpStatus.OK);
     }

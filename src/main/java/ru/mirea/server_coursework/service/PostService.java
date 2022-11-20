@@ -5,6 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.mirea.server_coursework.dto.GetPostDTO;
+import ru.mirea.server_coursework.exception.WrongIdException;
+import ru.mirea.server_coursework.mapper.PostMapper;
 import ru.mirea.server_coursework.model.Category;
 import ru.mirea.server_coursework.model.Post;
 import ru.mirea.server_coursework.model.User;
@@ -19,103 +22,90 @@ import java.util.Optional;
 @Service
 public class PostService {
     private final PostRepository postRepository;
+    private final PostMapper postMapper;
 
     Sort sortPromotionAndRating = Sort.by(List.of(
             new Sort.Order(Sort.Direction.DESC, "promotion"),
-            new Sort.Order(Sort.Direction.DESC, "rating")));
+            new Sort.Order(Sort.Direction.DESC, "sellerRating")));
     Sort sortPromotion = Sort.by(List.of(
             new Sort.Order(Sort.Direction.DESC, "promotion")));
 
     @Autowired
-    public PostService(PostRepository postRepository) {
+    public PostService(PostRepository postRepository, PostMapper postMapper) {
         this.postRepository = postRepository;
+        this.postMapper = postMapper;
     }
 
     @Transactional(readOnly = true)
-    public Optional<Post> findById(long id) {
+    public Post findById(long id) throws WrongIdException {
         log.info("Find post by id = {}", id);
-        return postRepository.findById(id);
+        Post post = postRepository.findById(id);
+        if (Objects.isNull(post))
+            throw new WrongIdException("Неправильный id");
+        return post;
     }
 
     @Transactional(readOnly = true)
-    public List<Post> findAllByOrderByPromotionDesc() {
+    public List<GetPostDTO> findAllByOrderByPromotionDesc() {
         log.info("Find all posts w/o order or filter");
-        return postRepository.findAllBySold(false, sortPromotion);
+        return postMapper.toPostDto(postRepository.findAllBySold(false, sortPromotion));
     }
 
     @Transactional(readOnly = true)
-    public List<Post> findAllSorted(String field, String option) {
+    public List<GetPostDTO> findAllSorted(String field, String option) {
         log.info("Find all posts sorted by {} {}ending", field, option);
-        List<Post> posts;
+        List<GetPostDTO> posts;
         Sort sort;
         if (Objects.equals(field, "price") && Objects.equals(option, "asc"))
             sort = Sort.by(List.of(
                     new Sort.Order(Sort.Direction.ASC, "price"),
                     new Sort.Order(Sort.Direction.DESC, "promotion"),
-                    new Sort.Order(Sort.Direction.DESC, "rating")
+                    new Sort.Order(Sort.Direction.DESC, "sellerRating")
             ));
         else if (Objects.equals(field, "price") && Objects.equals(option, "desc"))
             sort = Sort.by(List.of(
                     new Sort.Order(Sort.Direction.DESC, "price"),
                     new Sort.Order(Sort.Direction.DESC, "promotion"),
-                    new Sort.Order(Sort.Direction.DESC, "rating")
+                    new Sort.Order(Sort.Direction.DESC, "sellerRating")
             ));
         else if (Objects.equals(field, "postingDate") && Objects.equals(option, "asc"))
             sort = Sort.by(List.of(
                     new Sort.Order(Sort.Direction.ASC, "postingDate"),
                     new Sort.Order(Sort.Direction.DESC, "promotion"),
-                    new Sort.Order(Sort.Direction.DESC, "rating")
+                    new Sort.Order(Sort.Direction.DESC, "sellerRating")
             ));
         else
             sort = Sort.by(List.of(
                     new Sort.Order(Sort.Direction.DESC, "postingDate"),
                     new Sort.Order(Sort.Direction.DESC, "promotion"),
-                    new Sort.Order(Sort.Direction.DESC, "rating")
+                    new Sort.Order(Sort.Direction.DESC, "sellerRating")
             ));
-        posts = postRepository.findAllBySold(false, sort);
+        posts = postMapper.toPostDto(postRepository.findAllBySold(false, sort));
         return posts;
     }
 
     @Transactional(readOnly = true)
-    public List<Post> findAllByCategory(Category category) {
+    public List<GetPostDTO> findAllByCategory(Category category) {
         log.info("Find all posts with certain category {}", category.name());
-        return postRepository.findByCategoryAndSold(category, false, sortPromotionAndRating);
+        return postMapper.toPostDto(postRepository.findByCategoryAndSold(category, false, sortPromotionAndRating));
     }
 
     @Transactional(readOnly = true)
-    public List<Post> findAllByUserAndSold(User user, boolean sold) {
+    public List<GetPostDTO> findAllByUserAndSold(User user, boolean sold) {
         log.info("Find all posts by user {} and which {} sold", user.getUsername(), sold ? "are" : "are not");
-        return postRepository.findByUserAndSold(user, sold, sortPromotionAndRating);
+        return postMapper.toPostDto(postRepository.findByUserAndSold(user, sold, sortPromotionAndRating));
+    }
+
+    public List<GetPostDTO> findAllByRsqlQuery(String rsqlQuery) {
+        log.info("Find all posts filtered by RSQL query {}", rsqlQuery);
+        return postMapper.toPostDto(postRepository.findAllByQuery(rsqlQuery, sortPromotionAndRating));
     }
 
     @Transactional(readOnly = true)
-    public List<Post> findAllByPriceLessThan(double price) {
-        log.info("Find all posts with price less than {}", price);
-        return postRepository.findBySoldAndPriceLessThan(false, price, sortPromotionAndRating);
-    }
-
-    @Transactional(readOnly = true)
-    public List<Post> findAllByPriceGreaterThan(double price) {
-        log.info("Find all posts with price greater than {}", price);
-        return postRepository.findBySoldAndPriceGreaterThan(false, price, sortPromotionAndRating);
-    }
-
-    @Transactional(readOnly = true)
-    public List<Post> findAllByPostingDateIsBefore(LocalDate postingDate) {
-        log.info("Find all posts with posting date is before {}", postingDate);
-        return postRepository.findBySoldAndPostingDateIsBefore(false, postingDate, sortPromotionAndRating);
-    }
-
-    @Transactional(readOnly = true)
-    public List<Post> findAllByPostingDateIsAfter(LocalDate postingDate) {
-        log.info("Find all posts with posting date is after {}", postingDate);
-        return postRepository.findBySoldAndPostingDateIsAfter(false, postingDate, sortPromotionAndRating);
-    }
-
-    @Transactional(readOnly = true)
-    public List<Post> findAllByTitleContainingIgnoreCase(String title) {
+    public List<GetPostDTO> findAllByTitleContainingIgnoreCase(String title) {
         log.info("Find all by title containing string '{}'", title);
-        return postRepository.findBySoldAndTitleContaining(false, title, sortPromotionAndRating);
+        return postMapper.toPostDto(postRepository.findBySoldAndTitleContaining(false,
+                title, sortPromotionAndRating));
     }
 
     @Transactional

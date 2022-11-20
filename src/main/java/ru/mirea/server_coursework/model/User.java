@@ -18,8 +18,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -32,10 +32,6 @@ import java.util.List;
 @Builder
 public class User implements UserDetails {
     @Id
-    /*@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_id_seq")
-    @SequenceGenerator(name = "users_id_seq", sequenceName = "users_id_seq",
-            allocationSize = 0
-    )*/
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -51,6 +47,9 @@ public class User implements UserDetails {
     private String phone;
 
     private String city;
+
+    @Column(name = "registration_date")
+    private LocalDate registrationDate;
 
     private int rating;
 

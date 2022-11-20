@@ -3,10 +3,7 @@ package ru.mirea.server_coursework.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.mirea.server_coursework.controller.api.MessageApi;
@@ -43,9 +40,7 @@ public class MessageController implements MessageApi {
         String username = jwtTokenProvider.getUsernameFromToken(token);
         User user1 = (User) userService.loadUserByUsername(username);
         User user2 = (User) userService.loadUserByUsername(email);
-        List<Message> messageList = messageService.getConversation(user1, user2);
-        List<MessageDTO> conversation = messageList.stream()
-                .map(Message::toDTO).collect(Collectors.toList());
+        List<MessageDTO> conversation = messageService.getConversation(user1, user2);
         return new ResponseEntity<>(conversation, HttpStatus.FOUND);
     }
 

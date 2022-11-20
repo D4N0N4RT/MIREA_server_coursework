@@ -1,7 +1,6 @@
 package ru.mirea.server_coursework.controller;
 
 import lombok.AllArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -26,10 +25,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Controller
@@ -40,72 +37,48 @@ public class PostController implements PostApi {
     private final PostMapper postMapper;
 
     public ResponseEntity<?> getAll() {
-        List<Post> posts = postService.findAllByOrderByPromotionDesc();
-        List<GetPostDTO> dtos = posts.stream().map(Post::toDTO).collect(Collectors.toList());
-        return new ResponseEntity<>(dtos, HttpStatus.FOUND);
+        List<GetPostDTO> posts = postService.findAllByOrderByPromotionDesc();
+        return new ResponseEntity<>(posts, HttpStatus.FOUND);
     }
 
     public ResponseEntity<?> getSoldPostsByUser(@RequestParam(name="email") @NotBlank String email) {
         User user = (User) userService.loadUserByUsername(email);
-        List<Post> posts = postService.findAllByUserAndSold(user, true);
-        List<GetPostDTO> dtos = posts.stream().map(Post::toDTO).collect(Collectors.toList());
-        return new ResponseEntity<>(dtos, HttpStatus.FOUND);
+        List<GetPostDTO> posts = postService.findAllByUserAndSold(user, true);
+        return new ResponseEntity<>(posts, HttpStatus.FOUND);
     }
 
     public ResponseEntity<?> getAvailablePostsByUser(@RequestParam(name="email") @NotBlank String email) {
         User user = (User) userService.loadUserByUsername(email);
-        List<Post> posts = postService.findAllByUserAndSold(user, false);
-        List<GetPostDTO> dtos = posts.stream().map(Post::toDTO).collect(Collectors.toList());
-        return new ResponseEntity<>(dtos, HttpStatus.FOUND);
+        List<GetPostDTO> posts = postService.findAllByUserAndSold(user, false);
+        return new ResponseEntity<>(posts, HttpStatus.FOUND);
     }
 
     public ResponseEntity<?> getAllByCategory(@RequestParam(name="category") @NotNull Category category) {
-        List<Post> posts = postService.findAllByCategory(category);
-        List<GetPostDTO> dtos = posts.stream().map(Post::toDTO).collect(Collectors.toList());
-        return new ResponseEntity<>(dtos, HttpStatus.FOUND);
+        List<GetPostDTO> posts = postService.findAllByCategory(category);
+        return new ResponseEntity<>(posts, HttpStatus.FOUND);
     }
 
     public ResponseEntity<?> getAllSort(@RequestParam(name="field") @NotBlank String field,
                                         @RequestParam(name="order") @NotBlank String order) {
-        List<Post> posts = postService.findAllSorted(field, order);
-        List<GetPostDTO> dtos = posts.stream().map(Post::toDTO).collect(Collectors.toList());
-        return new ResponseEntity<>(dtos, HttpStatus.FOUND);
+        List<GetPostDTO> posts = postService.findAllSorted(field, order);
+        return new ResponseEntity<>(posts, HttpStatus.FOUND);
     }
 
-    public ResponseEntity<?> getAllFilterPrice(@RequestParam(name="price") double price,
-                                               @PathVariable(name="option") @NotBlank String option) {
-        List<Post> posts;
-        if (Objects.equals(option, "less"))
-            posts = postService.findAllByPriceLessThan(price);
-        else
-            posts = postService.findAllByPriceGreaterThan(price);
-        List<GetPostDTO> dtos = posts.stream().map(Post::toDTO).collect(Collectors.toList());
-        return new ResponseEntity<>(dtos, HttpStatus.FOUND);
-    }
-
-    public ResponseEntity<?> getAllFilterDate(@RequestParam(name="date")
-                                              @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-                                                      LocalDate date,
-                                              @PathVariable(name="option") String option) {
-        List<Post> posts;
-        if (Objects.equals(option, "before"))
-            posts = postService.findAllByPostingDateIsBefore(date);
-        else
-            posts = postService.findAllByPostingDateIsAfter(date);
-        List<GetPostDTO> dtos = posts.stream().map(Post::toDTO).collect(Collectors.toList());
-        return new ResponseEntity<>(dtos, HttpStatus.FOUND);
+    public ResponseEntity<?> getAllFilter(@RequestParam(name="q") String rsqlQuery) {
+        List<GetPostDTO> posts = postService.findAllByRsqlQuery(rsqlQuery);
+        return new ResponseEntity<>(posts, HttpStatus.FOUND);
     }
 
     public ResponseEntity<?> searchByTitle(@RequestParam @NotBlank String title) {
-        List<Post> posts = postService.findAllByTitleContainingIgnoreCase(title);
-        List<GetPostDTO> dtos = posts.stream().map(Post::toDTO).collect(Collectors.toList());
-        return new ResponseEntity<>(dtos, HttpStatus.FOUND);
+        List<GetPostDTO> posts = postService.findAllByTitleContainingIgnoreCase(title);
+        return new ResponseEntity<>(posts, HttpStatus.FOUND);
     }
 
     public ResponseEntity<?> getById(@PathVariable(name="id") long id) throws WrongIdException {
-        Post post = postService.findById(id).orElseThrow(() -> new WrongIdException("Неправльный id"));
-        GetPostDTO dto = post.toDTO();
-        return new ResponseEntity<>(dto, HttpStatus.FOUND);
+        Post post = postService.findById(id);
+        GetPostDTO postDto = postMapper
+                .toPostDto(post);
+        return new ResponseEntity<>(postDto, HttpStatus.FOUND);
     }
 
     public ResponseEntity<?> createPost(@RequestBody @Valid CreatePostDTO dto, HttpServletRequest request) {
@@ -122,7 +95,7 @@ public class PostController implements PostApi {
         String token = jwtTokenProvider.resolveToken(request);
         String username = jwtTokenProvider.getUsernameFromToken(token);
         User user = (User) userService.loadUserByUsername(username);
-        Post post = postService.findById(id).orElseThrow(() -> new WrongIdException("Неправльный id"));
+        Post post = postService.findById(id);
         if (Objects.equals(post.getUser().getUsername(), user.getUsername())) {
             postService.delete(post);
             return new ResponseEntity<>("Объявление удалено", HttpStatus.OK);
@@ -136,7 +109,7 @@ public class PostController implements PostApi {
         String token = jwtTokenProvider.resolveToken(request);
         String username = jwtTokenProvider.getUsernameFromToken(token);
         User user = (User) userService.loadUserByUsername(username);
-        Post post = postService.findById(id).orElseThrow(() -> new WrongIdException("Неправльный id"));
+        Post post = postService.findById(id);
         if (Objects.equals(post.getUser().getUsername(), user.getUsername())) {
             /*if (dto.getPrice() < 0)
                 throw new PriceValidException("Ошибка валидации, проверьте введенные данные\nОшибка: Цена должна быть не меньше 1");*/
@@ -153,10 +126,10 @@ public class PostController implements PostApi {
         String token = jwtTokenProvider.resolveToken(request);
         String username = jwtTokenProvider.getUsernameFromToken(token);
         User user = (User) userService.loadUserByUsername(username);
-        Post post = postService.findById(id).orElseThrow(() -> new WrongIdException("Неправльный id"));
+        Post post = postService.findById(id);
         if (!Objects.equals(post.getUser().getUsername(), user.getUsername())) {
             post.setSold(true);
-            post.setBuyerEmail(user.getUsername());
+            post.setBuyerId(user.getId());
             postService.update(post);
             return new ResponseEntity<>("Объявление куплено", HttpStatus.OK);
         } else {
@@ -169,8 +142,8 @@ public class PostController implements PostApi {
         String token = jwtTokenProvider.resolveToken(request);
         String username = jwtTokenProvider.getUsernameFromToken(token);
         User user = (User) userService.loadUserByUsername(username);
-        Post post = postService.findById(id).orElseThrow(() -> new WrongIdException("Неправльный id"));
-        if (!Objects.equals(post.getBuyerEmail(), user.getUsername())) {
+        Post post = postService.findById(id);
+        if (!Objects.equals(post.getBuyerId(), user.getId())) {
             User seller = post.getUser();
             seller.setRating(seller.getRating() + grade);
             userService.update(seller);
@@ -189,7 +162,7 @@ public class PostController implements PostApi {
         String token = jwtTokenProvider.resolveToken(request);
         String username = jwtTokenProvider.getUsernameFromToken(token);
         User user = (User) userService.loadUserByUsername(username);
-        Post post = postService.findById(id).orElseThrow(() -> new WrongIdException("Неправльный id"));
+        Post post = postService.findById(id);
         if (Objects.equals(post.getUser().getUsername(), user.getUsername())) {
             post.setPromotion(post.getPromotion() + promotion);
             postService.update(post);

@@ -7,6 +7,7 @@ import ru.mirea.server_coursework.model.User;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.time.LocalDate;
 
 @Getter
 @Builder
@@ -43,6 +44,7 @@ public class RegisterUserDTO implements IUserDTO {
                 .surname(surname)
                 .phone(phone)
                 .city(city)
+                .registrationDate(LocalDate.now())
                 .isActive(true)
                 .rating(0).role(Role.USER).build();
     }

@@ -33,6 +33,7 @@ CREATE TABLE IF NOT EXISTS users
     surname VARCHAR(75),
     phone VARCHAR(10),
     city VARCHAR(50),
+    registration_date DATE,
     rating INTEGER,
     "role" VARCHAR(25),
     activity BOOLEAN
@@ -53,8 +54,10 @@ CREATE TABLE IF NOT EXISTS posts
     sold BOOLEAN,
     posting_date DATE,
     "category" VARCHAR(50),
-    rating INTEGER,
-    buyer_email VARCHAR(50),
+    seller_rating INTEGER,
+    city VARCHAR(50),
+    exchanged BOOLEAN,
+    buyer_id BIGSERIAL,
     FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 

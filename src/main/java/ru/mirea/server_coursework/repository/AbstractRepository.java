@@ -63,8 +63,8 @@ public abstract class AbstractRepository<M, I> {
         }
     }
 
-    public Optional<M> findById(@NonNull I id) {
-        return Optional.of(entityManager.find(clazz, id));
+    public M findById(@NonNull I id) {
+        return entityManager.find(clazz, id);
     }
 
     private <T> List<M> findAll(@NonNull CriteriaQuery<M> criteriaQuery,

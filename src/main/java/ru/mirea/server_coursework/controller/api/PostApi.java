@@ -63,15 +63,14 @@ public interface PostApi {
 
     @RequestMapping(
             method = RequestMethod.GET,
-            value = "/posts/filter/price/{option}",
+            value = "/posts/filter",
             produces = { "application/json" }
     )
-    ResponseEntity<?> getAllFilterPrice(
-            @RequestParam(name="price") double price,
-            @PathVariable(name="option") @NotBlank String option
+    ResponseEntity<?> getAllFilter(
+            @RequestParam(name="q") String rsqlQuery
     );
 
-    @RequestMapping(
+    /*@RequestMapping(
             method = RequestMethod.GET,
             value = "/posts/filter/date/{option}",
             produces = { "application/json" }
@@ -79,7 +78,7 @@ public interface PostApi {
     ResponseEntity<?> getAllFilterDate(
             @RequestParam(name="date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
             @PathVariable(name="option") String option
-    );
+    );*/
 
     @RequestMapping(
             method = RequestMethod.GET,
