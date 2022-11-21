@@ -1,6 +1,5 @@
 package ru.mirea.server_coursework.dto;
 
-import lombok.Data;
 import lombok.Getter;
 import ru.mirea.server_coursework.model.Category;
 import ru.mirea.server_coursework.model.Post;
@@ -11,7 +10,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
-import java.util.Objects;
 
 @Getter
 public class CreatePostDTO {
@@ -26,10 +24,9 @@ public class CreatePostDTO {
     @NotNull(message = "Объявление не может быть без категории")
     private Category category;
     private Boolean exchanged;
+    private Boolean delivered;
 
     public Post toPost(User user) {
-        if (Objects.isNull(exchanged))
-            exchanged = false;
         return Post.builder()
                 .title(title)
                 .description(description)
@@ -40,6 +37,7 @@ public class CreatePostDTO {
                 .user(user)
                 .city(user.getCity())
                 .exchanged(exchanged)
+                .delivered(delivered)
                 .sellerRating(user.getRating())
                 .postingDate(LocalDate.now())
                 .build();

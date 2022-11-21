@@ -46,7 +46,7 @@ public class Post {
     private boolean sold;
 
     @Column(name = "seller_rating")
-    private Integer sellerRating;
+    private Float sellerRating;
 
     @Column(name="posting_date")
     private LocalDate postingDate;
@@ -60,4 +60,6 @@ public class Post {
     private String city;
 
     private boolean exchanged;
+
+    private boolean delivered;
 }

@@ -20,7 +20,7 @@ public class GetPostDTO {
 
     private String userEmail;
 
-    private Integer sellerRating;
+    private Float sellerRating;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate postingDate;
@@ -28,4 +28,6 @@ public class GetPostDTO {
     private String description;
 
     private boolean exchanged;
+
+    private boolean delivered;
 }

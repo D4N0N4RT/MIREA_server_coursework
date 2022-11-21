@@ -12,11 +12,10 @@ import ru.mirea.server_coursework.model.Category;
 import ru.mirea.server_coursework.model.Post;
 import ru.mirea.server_coursework.model.User;
 import ru.mirea.server_coursework.repository.post.PostRepository;
+import ru.mirea.server_coursework.repository.post.PostSpecification;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -98,7 +97,7 @@ public class PostService {
 
     public List<GetPostDTO> findAllByRsqlQuery(String rsqlQuery) {
         log.info("Find all posts filtered by RSQL query {}", rsqlQuery);
-        return postMapper.toPostDto(postRepository.findAllByQuery(rsqlQuery, sortPromotionAndRating));
+        return postMapper.toPostDto(postRepository.findAllByQuery(PostSpecification.hasSold(false), rsqlQuery, sortPromotionAndRating));
     }
 
     @Transactional(readOnly = true)
@@ -109,7 +108,7 @@ public class PostService {
     }
 
     @Transactional
-    public void updatePostSetRatingForUser(Integer rating, User user) {
+    public void updatePostSetRatingForUser(Float rating, User user) {
         log.info("Update rating of posts from user - {}", user.getUsername());
         postRepository.updatePostSetRatingForUser(rating, user);
     }

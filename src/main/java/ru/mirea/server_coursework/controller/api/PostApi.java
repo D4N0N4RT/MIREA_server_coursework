@@ -11,13 +11,10 @@ import ru.mirea.server_coursework.dto.CreatePostDTO;
 import ru.mirea.server_coursework.dto.UpdatePostDTO;
 import ru.mirea.server_coursework.exception.WrongAuthorityException;
 import ru.mirea.server_coursework.exception.WrongIdException;
-import ru.mirea.server_coursework.model.Category;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
 
 /**
  * Описание класса
@@ -42,14 +39,14 @@ public interface PostApi {
             @RequestParam(name = "email") @NotBlank String email
     );
 
-    @RequestMapping(
+    /*@RequestMapping(
             method = RequestMethod.GET,
             value = "/posts/category",
             produces = { "application/json" }
     )
     ResponseEntity<?> getAllByCategory(
             @RequestParam(name="category") @NotNull Category category
-    );
+    );*/
 
     @RequestMapping(
             method = RequestMethod.GET,
@@ -69,16 +66,6 @@ public interface PostApi {
     ResponseEntity<?> getAllFilter(
             @RequestParam(name="q") String rsqlQuery
     );
-
-    /*@RequestMapping(
-            method = RequestMethod.GET,
-            value = "/posts/filter/date/{option}",
-            produces = { "application/json" }
-    )
-    ResponseEntity<?> getAllFilterDate(
-            @RequestParam(name="date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
-            @PathVariable(name="option") String option
-    );*/
 
     @RequestMapping(
             method = RequestMethod.GET,
@@ -139,7 +126,7 @@ public interface PostApi {
             HttpServletRequest request
     ) throws WrongIdException, WrongAuthorityException;
 
-    @RequestMapping(
+    /*@RequestMapping(
             method = RequestMethod.POST,
             value = "/posts/{id}/rate",
             produces = { "application/json" }
@@ -148,7 +135,7 @@ public interface PostApi {
             @PathVariable(name="id") long id,
             @RequestParam int grade,
             HttpServletRequest request
-    ) throws WrongIdException, WrongAuthorityException;
+    ) throws WrongIdException, WrongAuthorityException;*/
 
     @RequestMapping(
             method = RequestMethod.POST,

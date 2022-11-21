@@ -28,7 +28,7 @@ public class PostRepository extends AbstractRepository<Post, Long> {
     }
     /*@Modifying
     @Query("UPDATE Post p SET p.rating = :rating WHERE p.user = :user")*/
-    public void updatePostSetRatingForUser(Integer rating, User user) {
+    public void updatePostSetRatingForUser(Float rating, User user) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaUpdate<Post> update = builder.createCriteriaUpdate(Post.class);
         Root<Post> root = update.from(Post.class);

@@ -24,6 +24,14 @@ CREATE SEQUENCE IF NOT EXISTS messages_id_seq
     CACHE 1;
 ALTER SEQUENCE messages_id_seq OWNER TO db_user;
 
+CREATE SEQUENCE IF NOT EXISTS reviews_id_seq
+    INCREMENT 1
+    MINVALUE 1
+    MAXVALUE 9223372036854775807
+    START 1
+    CACHE 1;
+ALTER SEQUENCE reviews_id_seq OWNER TO db_user;
+
 CREATE TABLE IF NOT EXISTS users
 (
     id BIGSERIAL NOT NULL PRIMARY KEY,
@@ -34,7 +42,7 @@ CREATE TABLE IF NOT EXISTS users
     phone VARCHAR(10),
     city VARCHAR(50),
     registration_date DATE,
-    rating INTEGER,
+    rating FLOAT,
     "role" VARCHAR(25),
     activity BOOLEAN
 );
@@ -54,9 +62,10 @@ CREATE TABLE IF NOT EXISTS posts
     sold BOOLEAN,
     posting_date DATE,
     "category" VARCHAR(50),
-    seller_rating INTEGER,
+    seller_rating FLOAT,
     city VARCHAR(50),
-    exchanged BOOLEAN,
+    exchanged BOOLEAN DEFAULT false,
+    delivered BOOLEAN DEFAULT false,
     buyer_id BIGSERIAL,
     FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
 );
@@ -79,3 +88,19 @@ CREATE TABLE IF NOT EXISTS messages
 ALTER TABLE messages OWNER TO db_user;
 
 ALTER SEQUENCE messages_id_seq OWNED BY messages.id;
+
+CREATE TABLE IF NOT EXISTS reviews
+(
+    id BIGSERIAL NOT NULL PRIMARY KEY ,
+    author_id BIGSERIAL,
+    post_id BIGSERIAL,
+    "content" TEXT,
+    "time" TIMESTAMP,
+    grade INTEGER,
+    FOREIGN KEY(author_id) REFERENCES users(id),
+    FOREIGN KEY(post_id) REFERENCES posts(id)
+);
+
+ALTER TABLE reviews OWNER TO db_user;
+
+ALTER SEQUENCE reviews_id_seq OWNED BY reviews.id;

@@ -14,4 +14,5 @@ public class UpdatePostDTO {
     private double price;
     private Category category;
     private boolean exchanged;
+    private boolean delivered;
 }

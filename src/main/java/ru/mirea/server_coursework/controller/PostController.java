@@ -24,7 +24,6 @@ import ru.mirea.server_coursework.service.UserService;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Objects;
 
@@ -53,10 +52,10 @@ public class PostController implements PostApi {
         return new ResponseEntity<>(posts, HttpStatus.FOUND);
     }
 
-    public ResponseEntity<?> getAllByCategory(@RequestParam(name="category") @NotNull Category category) {
+    /*public ResponseEntity<?> getAllByCategory(@RequestParam(name="category") @NotNull Category category) {
         List<GetPostDTO> posts = postService.findAllByCategory(category);
         return new ResponseEntity<>(posts, HttpStatus.FOUND);
-    }
+    }*/
 
     public ResponseEntity<?> getAllSort(@RequestParam(name="field") @NotBlank String field,
                                         @RequestParam(name="order") @NotBlank String order) {
@@ -137,7 +136,7 @@ public class PostController implements PostApi {
         }
     }
 
-    public ResponseEntity<?> ratePost(@PathVariable(name="id") long id, @RequestParam int grade, HttpServletRequest request)
+    /*public ResponseEntity<?> ratePost(@PathVariable(name="id") long id, @RequestParam int grade, HttpServletRequest request)
             throws WrongIdException, WrongAuthorityException {
         String token = jwtTokenProvider.resolveToken(request);
         String username = jwtTokenProvider.getUsernameFromToken(token);
@@ -153,7 +152,7 @@ public class PostController implements PostApi {
         else {
             throw new WrongAuthorityException("Вы не можете оценить данное объявление");
         }
-    }
+    }*/
 
     public ResponseEntity<?> promotePost(@PathVariable(name="id") long id,
                                          @RequestParam(name="promotion") double promotion,

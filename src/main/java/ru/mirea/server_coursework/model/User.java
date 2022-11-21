@@ -51,7 +51,7 @@ public class User implements UserDetails {
     @Column(name = "registration_date")
     private LocalDate registrationDate;
 
-    private int rating;
+    private float rating;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
