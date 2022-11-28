@@ -18,13 +18,13 @@ import java.util.List;
         componentModel = "spring")
 public interface ReviewMapper {
 
-    @Mapping(target = "authorEmail", source = "review.author.username")
+    @Mapping(target = "reviewAuthor", source = "review.author.username")
     @Mapping(target = "postId", source = "review.post.id")
-    @Mapping(target = "postAuthorEmail", source = "review.post.user.username")
+    @Mapping(target = "postAuthor", source = "review.post.user.username")
     ReviewDTO toReviewDto(Review review);
 
-    @Mapping(target = "authorEmail", source = "review.author.username")
+    @Mapping(target = "reviewAuthor", source = "review.author.username")
     @Mapping(target = "postId", source = "review.post.id")
-    @Mapping(target = "postAuthorEmail", source = "review.post.user.username")
+    @Mapping(target = "postAuthor", source = "review.post.user.username")
     List<ReviewDTO> toReviewDto(Collection<Review> reviews);
 }

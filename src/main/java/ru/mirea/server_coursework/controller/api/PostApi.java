@@ -8,9 +8,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.mirea.server_coursework.dto.CreatePostDTO;
+import ru.mirea.server_coursework.dto.CreateReviewDTO;
 import ru.mirea.server_coursework.dto.UpdatePostDTO;
 import ru.mirea.server_coursework.exception.WrongAuthorityException;
 import ru.mirea.server_coursework.exception.WrongIdException;
+import ru.mirea.server_coursework.exception.WrongRSQLQueryException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -23,30 +25,10 @@ public interface PostApi {
 
     @RequestMapping(
             method = RequestMethod.GET,
-            value = "/posts/by_user/sold",
+            value = "/posts",
             produces = { "application/json" }
     )
-    ResponseEntity<?> getSoldPostsByUser(
-            @RequestParam(name = "email") @NotBlank String email
-    );
-
-    @RequestMapping(
-            method = RequestMethod.GET,
-            value = "/posts/by_user/available",
-            produces = { "application/json" }
-    )
-    ResponseEntity<?> getAvailablePostsByUser(
-            @RequestParam(name = "email") @NotBlank String email
-    );
-
-    /*@RequestMapping(
-            method = RequestMethod.GET,
-            value = "/posts/category",
-            produces = { "application/json" }
-    )
-    ResponseEntity<?> getAllByCategory(
-            @RequestParam(name="category") @NotNull Category category
-    );*/
+    ResponseEntity<?> getAll() throws WrongRSQLQueryException;
 
     @RequestMapping(
             method = RequestMethod.GET,
@@ -56,7 +38,7 @@ public interface PostApi {
     ResponseEntity<?> getAllSort(
             @RequestParam(name="field") @NotBlank String field,
             @RequestParam(name="order") @NotBlank String order
-    );
+    ) throws WrongRSQLQueryException;
 
     @RequestMapping(
             method = RequestMethod.GET,
@@ -65,7 +47,7 @@ public interface PostApi {
     )
     ResponseEntity<?> getAllFilter(
             @RequestParam(name="q") String rsqlQuery
-    );
+    ) throws WrongRSQLQueryException;
 
     @RequestMapping(
             method = RequestMethod.GET,
@@ -74,7 +56,7 @@ public interface PostApi {
     )
     ResponseEntity<?> searchByTitle(
             @RequestParam @NotBlank String title
-    );
+    ) throws WrongRSQLQueryException;
 
     @RequestMapping(
             method = RequestMethod.GET,
@@ -95,7 +77,7 @@ public interface PostApi {
             HttpServletRequest request
     );
 
-    @RequestMapping(
+    /*@RequestMapping(
             method = RequestMethod.DELETE,
             value = "/posts/{id}",
             produces = { "application/json" }
@@ -103,7 +85,7 @@ public interface PostApi {
     ResponseEntity<?> deletePost(
             @PathVariable(name="id") long id,
             HttpServletRequest request
-    ) throws WrongIdException, WrongAuthorityException;
+    ) throws WrongIdException, WrongAuthorityException;*/
 
     @RequestMapping(
             method = RequestMethod.PATCH,
@@ -117,7 +99,7 @@ public interface PostApi {
     ) throws WrongIdException, WrongAuthorityException;
 
     @RequestMapping(
-            method = RequestMethod.POST,
+            method = RequestMethod.PATCH,
             value = "/posts/{id}/buy",
             produces = { "application/json" }
     )
@@ -126,19 +108,19 @@ public interface PostApi {
             HttpServletRequest request
     ) throws WrongIdException, WrongAuthorityException;
 
-    /*@RequestMapping(
-            method = RequestMethod.POST,
-            value = "/posts/{id}/rate",
-            produces = { "application/json" }
-    )
-    ResponseEntity<?> ratePost(
-            @PathVariable(name="id") long id,
-            @RequestParam int grade,
-            HttpServletRequest request
-    ) throws WrongIdException, WrongAuthorityException;*/
-
     @RequestMapping(
             method = RequestMethod.POST,
+            value = "/posts/{id}/review",
+            produces = { "application/json" }
+    )
+    ResponseEntity<?> reviewPost(
+            @PathVariable(name="id") long id,
+            @Valid CreateReviewDTO dto,
+            HttpServletRequest request
+    ) throws WrongIdException, WrongAuthorityException, WrongRSQLQueryException;
+
+    @RequestMapping(
+            method = RequestMethod.PATCH,
             value = "/posts/{id}/promote",
             produces = { "application/json" }
     )

@@ -15,4 +15,6 @@ public class UpdatePostDTO {
     private Category category;
     private boolean exchanged;
     private boolean delivered;
+    @Size(min = 1, message = "Город не может отсутствовать")
+    private String city;
 }

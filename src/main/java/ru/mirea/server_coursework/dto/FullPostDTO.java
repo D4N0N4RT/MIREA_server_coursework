@@ -7,9 +7,13 @@ import ru.mirea.server_coursework.model.Category;
 
 import java.time.LocalDate;
 
+/**
+ * Описание класса
+ */
 @Getter
 @Builder
-public class GetPostDTO {
+public class FullPostDTO {
+
     private long id;
 
     private String title;
@@ -18,14 +22,16 @@ public class GetPostDTO {
 
     private double price;
 
-    private String userEmail;
+    private String sellerEmail;
 
     private Float sellerRating;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy")
     private LocalDate postingDate;
 
     private String description;
+
+    private String city;
 
     private boolean exchanged;
 

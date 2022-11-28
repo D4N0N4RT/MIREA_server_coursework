@@ -1,6 +1,6 @@
 
 echo Startup docker container
-cd docker
+cd deploy
 call docker-compose up -d
 
 pause

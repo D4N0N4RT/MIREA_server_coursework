@@ -10,6 +10,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.query.QueryUtils;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
+import ru.mirea.server_coursework.exception.WrongRSQLQueryException;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
@@ -97,30 +98,30 @@ public abstract class AbstractRepository<M, I> {
         return findAll(criteriaQuery, root, predicateList, orderList);
     }
 
-    public List<M> findAll(@Nullable Specification<M> specification, @Nullable Sort sort) {
+    public List<M> findAll(@Nullable Specification<M> specification, @Nullable Sort sort) throws WrongRSQLQueryException {
         return findAllByQuery(specification, null, sort);
     }
 
-    public List<M> findAll() {
+    public List<M> findAll() throws WrongRSQLQueryException {
         return findAll(null, null);
     }
 
-    public List<M> findAll(Specification<M> specification) {
+    public List<M> findAll(Specification<M> specification) throws WrongRSQLQueryException {
         return findAll(specification, null);
     }
 
-    public List<M> findAll(Sort sort) {
+    public List<M> findAll(Sort sort) throws WrongRSQLQueryException {
         return findAll(null, sort);
     }
 
-    public List<M> findAllByQuery(@Nullable String rsqlQuery, @Nullable Sort sort) {
+    public List<M> findAllByQuery(@Nullable String rsqlQuery, @Nullable Sort sort) throws WrongRSQLQueryException {
         return findAllByQuery(null, rsqlQuery, sort);
     }
 
     public List<M> findAllByQuery(@Nullable Specification<M> specification,
                                   @Nullable String rsqlQuery,
                                   @Nullable Sort sort
-    ) {
+    ) throws WrongRSQLQueryException {
         CriteriaQuery<M> criteriaQuery = criteriaBuilder.createQuery(clazz);
         Root<M> root = criteriaQuery.from(clazz);
 
@@ -128,16 +129,15 @@ public abstract class AbstractRepository<M, I> {
         if (rsqlQuery != null) {
             RSQLVisitor<Predicate, EntityManager> visitor = new JpaPredicateVisitor<M>().defineRoot(root);
 
-            Node rootNode = null;
+            Node rootNode;
             try {
                 rootNode = new RSQLParser().parse(rsqlQuery);
+                predicateList.add(rootNode.accept(visitor, entityManager));
             } catch (Exception e) {
-                String message = "Failed to parse the given RSQL query";
+                String message = "Не уалось прочитать строку RSQL запроса";
 
-                //throw new WrongRSQLQueryException(message);
+                throw new WrongRSQLQueryException(message);
             }
-
-            predicateList.add(rootNode.accept(visitor, entityManager));
         }
 
         if (specification != null) {
@@ -168,11 +168,11 @@ public abstract class AbstractRepository<M, I> {
         return entityManager.contains(model);
     }
 
-    public boolean isExist(Specification<M> specification) {
+    public boolean isExist(Specification<M> specification) throws WrongRSQLQueryException {
         return !findAll(specification).isEmpty();
     }
 
-    public Integer size() {
+    public Integer size() throws WrongRSQLQueryException {
         return findAll().size();
     }
 }

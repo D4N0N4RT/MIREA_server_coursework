@@ -1,5 +1,6 @@
 package ru.mirea.server_coursework.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,6 +31,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@JsonIgnoreProperties(value = {"posts"})
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -58,7 +60,7 @@ public class User implements UserDetails {
     private Role role;
 
     @Column(name = "activity")
-    private boolean isActive;
+    private boolean active;
 
     @JsonManagedReference
     @OneToMany(fetch = FetchType.LAZY,
@@ -79,21 +81,21 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return isActive;
+        return active;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return isActive;
+        return active;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return isActive;
+        return active;
     }
 
     @Override
     public boolean isEnabled() {
-        return isActive;
+        return active;
     }
 }

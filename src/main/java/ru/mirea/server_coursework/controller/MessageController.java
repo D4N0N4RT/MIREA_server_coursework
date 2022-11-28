@@ -1,6 +1,6 @@
 package ru.mirea.server_coursework.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.mirea.server_coursework.controller.api.MessageApi;
 import ru.mirea.server_coursework.dto.MessageDTO;
+import ru.mirea.server_coursework.exception.WrongRSQLQueryException;
 import ru.mirea.server_coursework.model.Message;
 import ru.mirea.server_coursework.model.User;
 import ru.mirea.server_coursework.security.JwtTokenProvider;
@@ -19,29 +20,22 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
+@AllArgsConstructor
 public class MessageController implements MessageApi {
     private final MessageService messageService;
     private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
 
-    @Autowired
-    public MessageController(MessageService messageService, UserService userService, JwtTokenProvider jwtTokenProvider) {
-        this.messageService = messageService;
-        this.userService = userService;
-        this.jwtTokenProvider = jwtTokenProvider;
-    }
-
     public ResponseEntity<?> getConversation(@RequestParam(name="email") @NotBlank String email,
-                                             HttpServletRequest request) {
+                                             HttpServletRequest request) throws WrongRSQLQueryException {
         String token = jwtTokenProvider.resolveToken(request);
         String username = jwtTokenProvider.getUsernameFromToken(token);
         User user1 = (User) userService.loadUserByUsername(username);
         User user2 = (User) userService.loadUserByUsername(email);
         List<MessageDTO> conversation = messageService.getConversation(user1, user2);
-        return new ResponseEntity<>(conversation, HttpStatus.FOUND);
+        return new ResponseEntity<>(conversation, HttpStatus.OK);
     }
 
     public ResponseEntity<?> sendMessage(@RequestParam(name="email") @NotBlank String email,

@@ -10,10 +10,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.mirea.server_coursework.dto.IUserDTO;
 import ru.mirea.server_coursework.exception.PasswordCheckException;
+import ru.mirea.server_coursework.exception.WrongIdException;
+import ru.mirea.server_coursework.exception.WrongRSQLQueryException;
 import ru.mirea.server_coursework.model.User;
-import ru.mirea.server_coursework.repository.user.UserRepository;
+import ru.mirea.server_coursework.repository.UserRepository;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,20 +33,30 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional(readOnly = true)
-    public List<User> getAll() {
+    public List<User> getAll() throws WrongRSQLQueryException {
         log.info("Find all users");
         return userRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public User getById(long id) throws WrongIdException {
+        log.info("Find user by id {}", id);
+        User user = userRepository.findById(id);
+        if (Objects.isNull(user))
+            throw new WrongIdException("Неправильный id пользователя");
+        return user;
     }
 
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         log.info("Find user with username {}", username);
-        if (userRepository.findByUsername(username) == null) {
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
             log.warn("There is no user with username - {}", username);
             throw new UsernameNotFoundException("Пользователя с таким именем не существует");
         }
-        return userRepository.findByUsername(username);
+        return user;
     }
 
     @Transactional

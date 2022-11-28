@@ -1,4 +1,4 @@
-package ru.mirea.server_coursework.repository.post;
+package ru.mirea.server_coursework.repository;
 
 import org.springframework.data.jpa.domain.Specification;
 import ru.mirea.server_coursework.model.Category;

@@ -5,14 +5,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.mirea.server_coursework.dto.GetPostDTO;
+import ru.mirea.server_coursework.dto.ShortPostDTO;
 import ru.mirea.server_coursework.exception.WrongIdException;
+import ru.mirea.server_coursework.exception.WrongRSQLQueryException;
 import ru.mirea.server_coursework.mapper.PostMapper;
 import ru.mirea.server_coursework.model.Category;
 import ru.mirea.server_coursework.model.Post;
 import ru.mirea.server_coursework.model.User;
-import ru.mirea.server_coursework.repository.post.PostRepository;
-import ru.mirea.server_coursework.repository.post.PostSpecification;
+import ru.mirea.server_coursework.repository.PostRepository;
+import ru.mirea.server_coursework.repository.PostSpecification;
 
 import java.util.List;
 import java.util.Objects;
@@ -45,15 +46,15 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public List<GetPostDTO> findAllByOrderByPromotionDesc() {
+    public List<ShortPostDTO> findAllByOrderByPromotionDescRatingDesc() throws WrongRSQLQueryException {
         log.info("Find all posts w/o order or filter");
-        return postMapper.toPostDto(postRepository.findAllBySold(false, sortPromotion));
+        return postMapper.toShortPostDto(postRepository.findAllBySold(false, sortPromotionAndRating));
     }
 
     @Transactional(readOnly = true)
-    public List<GetPostDTO> findAllSorted(String field, String option) {
+    public List<ShortPostDTO> findAllSorted(String field, String option) throws WrongRSQLQueryException {
         log.info("Find all posts sorted by {} {}ending", field, option);
-        List<GetPostDTO> posts;
+        List<ShortPostDTO> posts;
         Sort sort;
         if (Objects.equals(field, "price") && Objects.equals(option, "asc"))
             sort = Sort.by(List.of(
@@ -79,31 +80,31 @@ public class PostService {
                     new Sort.Order(Sort.Direction.DESC, "promotion"),
                     new Sort.Order(Sort.Direction.DESC, "sellerRating")
             ));
-        posts = postMapper.toPostDto(postRepository.findAllBySold(false, sort));
+        posts = postMapper.toShortPostDto(postRepository.findAllBySold(false, sort));
         return posts;
     }
 
     @Transactional(readOnly = true)
-    public List<GetPostDTO> findAllByCategory(Category category) {
+    public List<ShortPostDTO> findAllByCategory(Category category) throws WrongRSQLQueryException {
         log.info("Find all posts with certain category {}", category.name());
-        return postMapper.toPostDto(postRepository.findByCategoryAndSold(category, false, sortPromotionAndRating));
+        return postMapper.toShortPostDto(postRepository.findByCategoryAndSold(category, false, sortPromotionAndRating));
     }
 
     @Transactional(readOnly = true)
-    public List<GetPostDTO> findAllByUserAndSold(User user, boolean sold) {
+    public List<ShortPostDTO> findAllByUserAndSold(User user, boolean sold) throws WrongRSQLQueryException {
         log.info("Find all posts by user {} and which {} sold", user.getUsername(), sold ? "are" : "are not");
-        return postMapper.toPostDto(postRepository.findByUserAndSold(user, sold, sortPromotionAndRating));
+        return postMapper.toShortPostDto(postRepository.findByUserAndSold(user, sold, sortPromotionAndRating));
     }
 
-    public List<GetPostDTO> findAllByRsqlQuery(String rsqlQuery) {
+    public List<ShortPostDTO> findAllByRsqlQuery(String rsqlQuery) throws WrongRSQLQueryException {
         log.info("Find all posts filtered by RSQL query {}", rsqlQuery);
-        return postMapper.toPostDto(postRepository.findAllByQuery(PostSpecification.hasSold(false), rsqlQuery, sortPromotionAndRating));
+        return postMapper.toShortPostDto(postRepository.findAllByQuery(PostSpecification.hasSold(false), rsqlQuery, sortPromotionAndRating));
     }
 
     @Transactional(readOnly = true)
-    public List<GetPostDTO> findAllByTitleContainingIgnoreCase(String title) {
+    public List<ShortPostDTO> findAllByTitleContainingIgnoreCase(String title) throws WrongRSQLQueryException {
         log.info("Find all by title containing string '{}'", title);
-        return postMapper.toPostDto(postRepository.findBySoldAndTitleContaining(false,
+        return postMapper.toShortPostDto(postRepository.findBySoldAndTitleContaining(false,
                 title, sortPromotionAndRating));
     }
 

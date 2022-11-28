@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import ru.mirea.server_coursework.exception.WrongRSQLQueryException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -23,7 +24,7 @@ public interface MessageApi {
     ResponseEntity<?> getConversation(
             @RequestParam(name="email") @NotBlank String email,
             HttpServletRequest request
-    );
+    ) throws WrongRSQLQueryException;
 
     @RequestMapping(
             method = RequestMethod.POST,

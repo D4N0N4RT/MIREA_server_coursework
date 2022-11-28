@@ -1,12 +1,11 @@
-package ru.mirea.server_coursework.repository.user;
+package ru.mirea.server_coursework.repository;
 
 import org.springframework.stereotype.Repository;
 import ru.mirea.server_coursework.model.User;
-import ru.mirea.server_coursework.repository.AbstractRepository;
 
 import javax.annotation.PostConstruct;
 
-import static ru.mirea.server_coursework.repository.user.UserSpecification.*;
+import static ru.mirea.server_coursework.repository.UserSpecification.*;
 
 @Repository
 public class UserRepository extends AbstractRepository<User, Long> {

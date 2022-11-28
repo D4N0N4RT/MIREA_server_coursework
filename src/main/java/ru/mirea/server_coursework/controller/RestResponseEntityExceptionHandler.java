@@ -16,16 +16,17 @@ import ru.mirea.server_coursework.exception.DuplicateUsernameException;
 import ru.mirea.server_coursework.exception.PasswordCheckException;
 import ru.mirea.server_coursework.exception.WrongAuthorityException;
 import ru.mirea.server_coursework.exception.WrongIdException;
+import ru.mirea.server_coursework.exception.WrongRSQLQueryException;
 
 import java.util.List;
 
 @ControllerAdvice
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(value = { WrongIdException.class })
+    @ExceptionHandler(value = { WrongIdException.class, WrongRSQLQueryException.class })
     protected ResponseEntity<Object> handleNotFound(Exception ex, WebRequest request) {
         return handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(),
-                HttpStatus.NOT_FOUND, request);
+                HttpStatus.BAD_REQUEST, request);
     }
 
     @ExceptionHandler(value = { AuthenticationException.class,
@@ -52,6 +53,6 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
             error.append(", ").append(errors.get(i).getDefaultMessage());
         }
         return handleExceptionInternal(ex, error, new HttpHeaders(),
-                HttpStatus.UNSUPPORTED_MEDIA_TYPE, request);
+                HttpStatus.BAD_REQUEST, request);
     }
 }

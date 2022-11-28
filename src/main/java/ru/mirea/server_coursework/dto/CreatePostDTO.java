@@ -40,6 +40,7 @@ public class CreatePostDTO {
                 .delivered(delivered)
                 .sellerRating(user.getRating())
                 .postingDate(LocalDate.now())
+                .buyerId(0L)
                 .build();
     }
 }

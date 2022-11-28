@@ -16,6 +16,6 @@ public class MessageDTO {
     private String sender;
     private String receiver;
     private String content;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss dd-MM-yyyy")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss dd.MM.yyyy")
     private LocalDateTime time;
 }

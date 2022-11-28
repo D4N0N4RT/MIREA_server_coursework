@@ -45,7 +45,7 @@ public class RegisterUserDTO implements IUserDTO {
                 .phone(phone)
                 .city(city)
                 .registrationDate(LocalDate.now())
-                .isActive(true)
+                .active(true)
                 .rating(0).role(Role.USER).build();
     }
 }

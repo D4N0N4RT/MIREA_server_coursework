@@ -46,12 +46,12 @@ public interface AuthApi {
             HttpServletRequest request
     ) throws PasswordCheckException;
 
-    @RequestMapping(
+    /*@RequestMapping(
             method = RequestMethod.POST,
             value = "/auth/logout"
     )
     void logout(
             HttpServletRequest request,
             HttpServletResponse response
-    );
+    );*/
 }

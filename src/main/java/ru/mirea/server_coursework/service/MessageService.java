@@ -6,10 +6,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.mirea.server_coursework.dto.MessageDTO;
+import ru.mirea.server_coursework.exception.WrongRSQLQueryException;
 import ru.mirea.server_coursework.mapper.MessageMapper;
 import ru.mirea.server_coursework.model.Message;
 import ru.mirea.server_coursework.model.User;
-import ru.mirea.server_coursework.repository.message.MessageRepository;
+import ru.mirea.server_coursework.repository.MessageRepository;
 
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class MessageService {
     }
 
     @Transactional(readOnly = true)
-    public List<MessageDTO> getConversation(User user1, User user2) {
+    public List<MessageDTO> getConversation(User user1, User user2) throws WrongRSQLQueryException {
         log.info("Get conversation between user {} and user {}", user1.getUsername(), user2.getUsername());
         return messageMapper.toMessageDto(messageRepository.findConversation(user1, user2, Sort.by("time")));
     }
