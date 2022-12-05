@@ -17,7 +17,7 @@ public interface UserApi {
 
     @RequestMapping(
             method = RequestMethod.GET,
-            value = "/users/{id}",
+            value = "/user/{id}",
             produces = { "application/json" }
     )
     ResponseEntity<?> getById(
@@ -26,7 +26,7 @@ public interface UserApi {
 
     @RequestMapping(
             method = RequestMethod.GET,
-            value = "/users/{id}/reviews",
+            value = "/user/{id}/reviews",
             produces = { "application/json" }
     )
     ResponseEntity<?> getReviews(
@@ -35,7 +35,7 @@ public interface UserApi {
 
     @RequestMapping(
             method = RequestMethod.GET,
-            value = "/users/{id}/posts",
+            value = "/user/{id}/posts",
             produces = { "application/json" }
     )
     ResponseEntity<?> getPosts(

@@ -18,7 +18,7 @@ public interface MessageApi {
 
     @RequestMapping(
             method = RequestMethod.GET,
-            value = "/messages",
+            value = "/message",
             produces = { "application/json" }
     )
     ResponseEntity<?> getConversation(
@@ -28,7 +28,7 @@ public interface MessageApi {
 
     @RequestMapping(
             method = RequestMethod.POST,
-            value = "/messages",
+            value = "/message",
             produces = { "application/json" }
     )
     ResponseEntity<?> sendMessage(

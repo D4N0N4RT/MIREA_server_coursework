@@ -7,10 +7,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.mirea.server_coursework.controller.api.AdminApi;
-import ru.mirea.server_coursework.dto.AuthRequestDTO;
 import ru.mirea.server_coursework.dto.RegisterUserDTO;
 import ru.mirea.server_coursework.exception.DuplicateUsernameException;
 import ru.mirea.server_coursework.exception.PasswordCheckException;
@@ -25,7 +23,6 @@ import ru.mirea.server_coursework.service.ReviewService;
 import ru.mirea.server_coursework.service.UserService;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @RestController

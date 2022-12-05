@@ -25,14 +25,14 @@ public interface PostApi {
 
     @RequestMapping(
             method = RequestMethod.GET,
-            value = "/posts",
+            value = "/post",
             produces = { "application/json" }
     )
     ResponseEntity<?> getAll() throws WrongRSQLQueryException;
 
     @RequestMapping(
             method = RequestMethod.GET,
-            value = "/posts/sort",
+            value = "/post/sort",
             produces = { "application/json" }
     )
     ResponseEntity<?> getAllSort(
@@ -42,7 +42,7 @@ public interface PostApi {
 
     @RequestMapping(
             method = RequestMethod.GET,
-            value = "/posts/filter",
+            value = "/post/filter",
             produces = { "application/json" }
     )
     ResponseEntity<?> getAllFilter(
@@ -51,7 +51,7 @@ public interface PostApi {
 
     @RequestMapping(
             method = RequestMethod.GET,
-            value = "/posts/search",
+            value = "/post/search",
             produces = { "application/json" }
     )
     ResponseEntity<?> searchByTitle(
@@ -60,7 +60,7 @@ public interface PostApi {
 
     @RequestMapping(
             method = RequestMethod.GET,
-            value = "/posts/{id}",
+            value = "/post/{id}",
             produces = { "application/json" }
     )
     ResponseEntity<?> getById(
@@ -69,7 +69,7 @@ public interface PostApi {
 
     @RequestMapping(
             method = RequestMethod.POST,
-            value = "/posts",
+            value = "/post",
             produces = { "application/json" }
     )
     ResponseEntity<?> createPost(
@@ -89,7 +89,7 @@ public interface PostApi {
 
     @RequestMapping(
             method = RequestMethod.PATCH,
-            value = "/posts/{id}",
+            value = "/post/{id}",
             produces = { "application/json" }
     )
     ResponseEntity<?> editPost(
@@ -100,7 +100,7 @@ public interface PostApi {
 
     @RequestMapping(
             method = RequestMethod.PATCH,
-            value = "/posts/{id}/buy",
+            value = "/post/{id}/buy",
             produces = { "application/json" }
     )
     ResponseEntity<?> buyPost(
@@ -110,7 +110,7 @@ public interface PostApi {
 
     @RequestMapping(
             method = RequestMethod.POST,
-            value = "/posts/{id}/review",
+            value = "/post/{id}/review",
             produces = { "application/json" }
     )
     ResponseEntity<?> reviewPost(
@@ -121,7 +121,7 @@ public interface PostApi {
 
     @RequestMapping(
             method = RequestMethod.PATCH,
-            value = "/posts/{id}/promote",
+            value = "/post/{id}/promote",
             produces = { "application/json" }
     )
     ResponseEntity<?> promotePost(
