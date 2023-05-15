@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import ru.mirea.server_coursework.controller.api.AdminApi;
+import ru.mirea.server_coursework.dto.BasicApiResponse;
 import ru.mirea.server_coursework.dto.RegisterUserDTO;
 import ru.mirea.server_coursework.exception.DuplicateUsernameException;
 import ru.mirea.server_coursework.exception.PasswordCheckException;
@@ -45,7 +46,7 @@ public class AdminController implements AdminApi {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             user.setRole(Role.ADMIN);
             userService.create(user);
-            return new ResponseEntity<>("Новый администратор создан", HttpStatus.OK);
+            return new ResponseEntity<>(new BasicApiResponse(200,"Новый администратор создан"), HttpStatus.OK);
         }
     }
 
@@ -54,21 +55,15 @@ public class AdminController implements AdminApi {
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-    /*public ResponseEntity<?> deleteUser(@RequestParam @NotBlank String email) {
-        User user = (User) userService.loadUserByUsername(email);
-        userService.delete(user);
-        return new ResponseEntity<>("Пользователь удален", HttpStatus.OK);
-    }*/
-
     public ResponseEntity<?> deletePost(@PathVariable(name = "id") long id) throws WrongIdException {
         Post post = postService.findById(id);
         postService.delete(post);
-        return new ResponseEntity<>("Объявление удалено", HttpStatus.OK);
+        return new ResponseEntity<>(new BasicApiResponse(200, "Объявление удалено"), HttpStatus.OK);
     }
 
     public ResponseEntity<?> deleteReview(long id) throws WrongIdException {
         Review review = reviewService.findById(id);
         reviewService.delete(review);
-        return new ResponseEntity<>("Отзыв удален", HttpStatus.OK);
+        return new ResponseEntity<>(new BasicApiResponse(200, "Отзыв удален"), HttpStatus.OK);
     }
 }

@@ -22,9 +22,8 @@ public class FullPostDTO {
 
     private double price;
 
-    private String sellerEmail;
-
-    private Float sellerRating;
+    //@JsonFormat(shape = JsonFormat.Shape.STRING)
+    private GetUserDTO seller;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy")
     private LocalDate postingDate;
@@ -36,4 +35,8 @@ public class FullPostDTO {
     private boolean exchanged;
 
     private boolean delivered;
+
+    private boolean sold;
+
+    private Long buyerId;
 }

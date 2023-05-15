@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDate;
-import java.util.List;
 
 /**
  * Описание класса
@@ -13,6 +12,8 @@ import java.util.List;
 @Getter
 @Builder
 public class GetUserDTO {
+
+    private Long id;
 
     private String username;
 
@@ -28,7 +29,5 @@ public class GetUserDTO {
     private LocalDate registrationDate;
 
     private float rating;
-
-    private List<ShortPostDTO> posts;
 
 }

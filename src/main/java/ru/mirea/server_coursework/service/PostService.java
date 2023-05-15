@@ -86,7 +86,7 @@ public class PostService {
 
     @Transactional(readOnly = true)
     public List<ShortPostDTO> findAllByCategory(Category category) throws WrongRSQLQueryException {
-        log.info("Find all posts with certain category {}", category.name());
+        log.info("Find all posts with certain category {}", category.getName());
         return postMapper.toShortPostDto(postRepository.findByCategoryAndSold(category, false, sortPromotionAndRating));
     }
 
@@ -96,9 +96,37 @@ public class PostService {
         return postMapper.toShortPostDto(postRepository.findByUserAndSold(user, sold, sortPromotionAndRating));
     }
 
-    public List<ShortPostDTO> findAllByRsqlQuery(String rsqlQuery) throws WrongRSQLQueryException {
-        log.info("Find all posts filtered by RSQL query {}", rsqlQuery);
-        return postMapper.toShortPostDto(postRepository.findAllByQuery(PostSpecification.hasSold(false), rsqlQuery, sortPromotionAndRating));
+    public List<ShortPostDTO> findAllByRsqlQuery(String rsqlQuery, int sortOption) throws WrongRSQLQueryException {
+        log.info("Find all posts filtered by RSQL query {} and sorted", rsqlQuery);
+        Sort sort;
+        if (sortOption == 1)
+            sort = Sort.by(List.of(
+                    new Sort.Order(Sort.Direction.ASC, "price"),
+                    new Sort.Order(Sort.Direction.DESC, "promotion"),
+                    new Sort.Order(Sort.Direction.DESC, "sellerRating")
+            ));
+        else if (sortOption == 2)
+            sort = Sort.by(List.of(
+                    new Sort.Order(Sort.Direction.DESC, "price"),
+                    new Sort.Order(Sort.Direction.DESC, "promotion"),
+                    new Sort.Order(Sort.Direction.DESC, "sellerRating")
+            ));
+        else if (sortOption == 3)
+            sort = Sort.by(List.of(
+                    new Sort.Order(Sort.Direction.ASC, "postingDate"),
+                    new Sort.Order(Sort.Direction.DESC, "promotion"),
+                    new Sort.Order(Sort.Direction.DESC, "sellerRating")
+            ));
+        else if (sortOption == 4)
+            sort = Sort.by(List.of(
+                    new Sort.Order(Sort.Direction.DESC, "postingDate"),
+                    new Sort.Order(Sort.Direction.DESC, "promotion"),
+                    new Sort.Order(Sort.Direction.DESC, "sellerRating")
+            ));
+        else {
+            sort = sortPromotionAndRating;
+        }
+        return postMapper.toShortPostDto(postRepository.findAllByQuery(PostSpecification.hasSold(false), rsqlQuery, sort));
     }
 
     @Transactional(readOnly = true)

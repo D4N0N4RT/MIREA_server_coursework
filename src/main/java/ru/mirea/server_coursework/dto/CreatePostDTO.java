@@ -22,11 +22,11 @@ public class CreatePostDTO {
     @Min(value = 1, message = "Цена должна быть не меньше 1")
     private double price;
     @NotNull(message = "Объявление не может быть без категории")
-    private Category category;
+    private Long categoryId;
     private Boolean exchanged;
     private Boolean delivered;
 
-    public Post toPost(User user) {
+    public Post toPost(User user, Category category) {
         return Post.builder()
                 .title(title)
                 .description(description)

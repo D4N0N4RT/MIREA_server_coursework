@@ -15,16 +15,17 @@ import java.util.List;
  */
 @Component
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE,
-        componentModel = "spring")
+        componentModel = "spring",
+        uses = {PostMapper.class, UserMapper.class})
 public interface ReviewMapper {
 
-    @Mapping(target = "reviewAuthor", source = "review.author.username")
-    @Mapping(target = "postId", source = "review.post.id")
-    @Mapping(target = "postAuthor", source = "review.post.user.username")
+    @Mapping(target = "reviewAuthor", source = "review.author")
+    @Mapping(target = "post", source = "review.post")
+    @Mapping(target = "postAuthor", source = "review.post.user")
     ReviewDTO toReviewDto(Review review);
 
-    @Mapping(target = "reviewAuthor", source = "review.author.username")
-    @Mapping(target = "postId", source = "review.post.id")
-    @Mapping(target = "postAuthor", source = "review.post.user.username")
+    @Mapping(target = "reviewAuthor", source = "review.author")
+    @Mapping(target = "post", source = "review.post")
+    @Mapping(target = "postAuthor", source = "review.post.user")
     List<ReviewDTO> toReviewDto(Collection<Review> reviews);
 }

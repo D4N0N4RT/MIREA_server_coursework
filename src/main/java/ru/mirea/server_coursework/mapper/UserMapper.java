@@ -22,7 +22,6 @@ public interface UserMapper {
     void updateUserFromDto(UpdateUserDTO dto, @MappingTarget User entity);
 
     @Mapping(target = "registrationDate", source = "user.registrationDate")
-    @Mapping(target = "posts", source = "postDTOCollection")
     GetUserDTO toUserDto(User user, Collection<ShortPostDTO> postDTOCollection);
 
     /*@Mapping(target = "registrationDate", source = "user.registrationDate")

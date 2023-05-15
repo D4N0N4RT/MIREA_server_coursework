@@ -28,7 +28,7 @@ public class JwtTokenProvider {
                 .setClaims(claims)
                 .setIssuedAt(Date.from(Instant.now()))
                 .setExpiration(
-                        Date.from(Instant.now().plus(jwtConfig.getTokenExpiresAfterDays(), ChronoUnit.DAYS)))
+                        Date.from(Instant.now().plus(jwtConfig.getTokenExpirationMs(), ChronoUnit.MILLIS)))
                 .signWith(jwtConfig.getSecretKeyBean())
                 .compact();
     }

@@ -22,7 +22,7 @@ public class PostSpecification {
     }
 
     public static Specification<Post> hasCategory(Category category) {
-        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("category"), category);
+        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("category_id"), category.getId());
     }
 
     public static Specification<Post> hasLowerPrice(double price) {

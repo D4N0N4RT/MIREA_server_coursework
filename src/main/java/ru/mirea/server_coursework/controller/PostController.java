@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.mirea.server_coursework.controller.api.PostApi;
+import ru.mirea.server_coursework.dto.BasicApiResponse;
 import ru.mirea.server_coursework.dto.CreatePostDTO;
 import ru.mirea.server_coursework.dto.CreateReviewDTO;
 import ru.mirea.server_coursework.dto.FullPostDTO;
@@ -17,9 +18,11 @@ import ru.mirea.server_coursework.exception.WrongAuthorityException;
 import ru.mirea.server_coursework.exception.WrongIdException;
 import ru.mirea.server_coursework.exception.WrongRSQLQueryException;
 import ru.mirea.server_coursework.mapper.PostMapper;
+import ru.mirea.server_coursework.model.Category;
 import ru.mirea.server_coursework.model.Post;
 import ru.mirea.server_coursework.model.Review;
 import ru.mirea.server_coursework.model.User;
+import ru.mirea.server_coursework.repository.CategoryRepository;
 import ru.mirea.server_coursework.security.JwtTokenProvider;
 import ru.mirea.server_coursework.service.PostService;
 import ru.mirea.server_coursework.service.ReviewService;
@@ -27,7 +30,6 @@ import ru.mirea.server_coursework.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.Objects;
 
@@ -39,27 +41,30 @@ public class PostController implements PostApi {
     private final ReviewService reviewService;
     private final JwtTokenProvider jwtTokenProvider;
     private final PostMapper postMapper;
+    private final CategoryRepository categoryRepository;
 
     public ResponseEntity<?> getAll() throws WrongRSQLQueryException {
         List<ShortPostDTO> posts = postService.findAllByOrderByPromotionDescRatingDesc();
         return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 
-    public ResponseEntity<?> getAllSort(@RequestParam(name="field") @NotBlank String field,
+    /*public ResponseEntity<?> getAllSort(@RequestParam(name="field") @NotBlank String field,
                                         @RequestParam(name="order") @NotBlank String order) throws WrongRSQLQueryException {
         List<ShortPostDTO> posts = postService.findAllSorted(field, order);
         return new ResponseEntity<>(posts, HttpStatus.OK);
-    }
+    }*/
 
-    public ResponseEntity<?> getAllFilter(@RequestParam(name="q") String rsqlQuery) throws WrongRSQLQueryException {
-        List<ShortPostDTO> posts = postService.findAllByRsqlQuery(rsqlQuery);
+    public ResponseEntity<?> getAllFilter(@RequestParam(name="query", required = false) String rsqlQuery,
+                                          @RequestParam(name="sort", required = false) int sortOption) throws
+            WrongRSQLQueryException {
+        List<ShortPostDTO> posts = postService.findAllByRsqlQuery(rsqlQuery, sortOption);
         return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 
-    public ResponseEntity<?> searchByTitle(@RequestParam @NotBlank String title) throws WrongRSQLQueryException {
+    /*public ResponseEntity<?> searchByTitle(@RequestParam @NotBlank String title) throws WrongRSQLQueryException {
         List<ShortPostDTO> posts = postService.findAllByTitleContainingIgnoreCase(title);
         return new ResponseEntity<>(posts, HttpStatus.OK);
-    }
+    }*/
 
     public ResponseEntity<?> getById(@PathVariable(name="id") long id) throws WrongIdException {
         Post post = postService.findById(id);
@@ -72,9 +77,10 @@ public class PostController implements PostApi {
         String token = jwtTokenProvider.resolveToken(request);
         String username = jwtTokenProvider.getUsernameFromToken(token);
         User user = (User) userService.loadUserByUsername(username);
-        Post post = dto.toPost(user);
+        Category category = categoryRepository.findById(dto.getCategoryId());
+        Post post = dto.toPost(user, category);
         postService.create(post);
-        return new ResponseEntity<>("Ваше объявление создано", HttpStatus.CREATED);
+        return new ResponseEntity<>(new BasicApiResponse(201, "Ваше объявление создано"), HttpStatus.CREATED);
     }
 
     /*public ResponseEntity<?> deletePost(@PathVariable(name="id") long id, HttpServletRequest request)
@@ -91,7 +97,8 @@ public class PostController implements PostApi {
         }
     }*/
 
-    public ResponseEntity<?> editPost(@PathVariable(name="id") long id, @RequestBody @Valid UpdatePostDTO dto, HttpServletRequest request)
+    public ResponseEntity<?> editPost(@PathVariable(name="id") long id, @RequestBody @Valid UpdatePostDTO dto,
+                                      HttpServletRequest request)
             throws WrongIdException, WrongAuthorityException {
         String token = jwtTokenProvider.resolveToken(request);
         String username = jwtTokenProvider.getUsernameFromToken(token);
@@ -102,7 +109,7 @@ public class PostController implements PostApi {
                 throw new PriceValidException("Ошибка валидации, проверьте введенные данные\nОшибка: Цена должна быть не меньше 1");*/
             postMapper.updatePostFromDto(dto, post);
             postService.update(post);
-            return new ResponseEntity<>("Данные объявления обновлены", HttpStatus.OK);
+            return new ResponseEntity<>(new BasicApiResponse(200, "Данные объявления обновлены"), HttpStatus.OK);
         } else {
             throw new WrongAuthorityException("Вы не можете изменить данное объявление");
         }
@@ -118,7 +125,7 @@ public class PostController implements PostApi {
             post.setSold(true);
             post.setBuyerId(user.getId());
             postService.update(post);
-            return new ResponseEntity<>("Объявление куплено", HttpStatus.OK);
+            return new ResponseEntity<>(new BasicApiResponse(200, "Объявление куплено"), HttpStatus.OK);
         } else {
             throw new WrongAuthorityException("Вы не можете купить данное объявление");
         }
@@ -131,12 +138,12 @@ public class PostController implements PostApi {
         String username = jwtTokenProvider.getUsernameFromToken(token);
         User user = (User) userService.loadUserByUsername(username);
         Post post = postService.findById(id);
-        if (!post.isSold() && !Objects.equals(post.getBuyerId(), user.getId())) {
+        if (!post.isSold() && Objects.equals(post.getBuyerId(), user.getId())) {
             Review review = dto.toReview(post, user);
             User seller = post.getUser();
             float newRating = reviewService.save(review, seller);
             postService.updatePostSetRatingForUser(newRating, seller);
-            return new ResponseEntity<>("Отзыв оставлен", HttpStatus.CREATED);
+            return new ResponseEntity<>(new BasicApiResponse(201, "Отзыв оставлен"), HttpStatus.CREATED);
         } else {
             throw new WrongAuthorityException("Вы не можете оставить отзыв");
         }
@@ -153,7 +160,8 @@ public class PostController implements PostApi {
         if (Objects.equals(post.getUser().getUsername(), user.getUsername())) {
             post.setPromotion(post.getPromotion() + promotion);
             postService.update(post);
-            return new ResponseEntity<>("Вы проплатили отображение объявления в топе выдачи", HttpStatus.OK);
+            return new ResponseEntity<>(new BasicApiResponse(200, "Вы проплатили отображение объявления в топе выдачи"),
+                    HttpStatus.OK);
         } else {
             throw new WrongAuthorityException("Вы не можете проплатить отображение данного объявления");
         }

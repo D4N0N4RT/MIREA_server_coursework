@@ -1,6 +1,5 @@
 package ru.mirea.server_coursework.controller.api;
 
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,7 +15,6 @@ import ru.mirea.server_coursework.exception.WrongRSQLQueryException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 
 /**
  * Описание класса
@@ -25,42 +23,43 @@ public interface PostApi {
 
     @RequestMapping(
             method = RequestMethod.GET,
-            value = "/post",
+            value = "/posts",
             produces = { "application/json" }
     )
     ResponseEntity<?> getAll() throws WrongRSQLQueryException;
 
-    @RequestMapping(
+    /*@RequestMapping(
             method = RequestMethod.GET,
-            value = "/post/sort",
+            value = "/posts/sort",
             produces = { "application/json" }
     )
     ResponseEntity<?> getAllSort(
             @RequestParam(name="field") @NotBlank String field,
             @RequestParam(name="order") @NotBlank String order
-    ) throws WrongRSQLQueryException;
+    ) throws WrongRSQLQueryException;*/
 
     @RequestMapping(
             method = RequestMethod.GET,
-            value = "/post/filter",
+            value = "/posts/filter",
             produces = { "application/json" }
     )
     ResponseEntity<?> getAllFilter(
-            @RequestParam(name="q") String rsqlQuery
+            @RequestParam(name="query") String rsqlQuery,
+            @RequestParam(name="sort") int sortOption
     ) throws WrongRSQLQueryException;
 
-    @RequestMapping(
+    /*@RequestMapping(
             method = RequestMethod.GET,
-            value = "/post/search",
+            value = "/posts/search",
             produces = { "application/json" }
     )
     ResponseEntity<?> searchByTitle(
             @RequestParam @NotBlank String title
-    ) throws WrongRSQLQueryException;
+    ) throws WrongRSQLQueryException;*/
 
     @RequestMapping(
             method = RequestMethod.GET,
-            value = "/post/{id}",
+            value = "/posts/{id}",
             produces = { "application/json" }
     )
     ResponseEntity<?> getById(
@@ -69,7 +68,7 @@ public interface PostApi {
 
     @RequestMapping(
             method = RequestMethod.POST,
-            value = "/post",
+            value = "/posts",
             produces = { "application/json" }
     )
     ResponseEntity<?> createPost(
@@ -89,7 +88,7 @@ public interface PostApi {
 
     @RequestMapping(
             method = RequestMethod.PATCH,
-            value = "/post/{id}",
+            value = "/posts/{id}",
             produces = { "application/json" }
     )
     ResponseEntity<?> editPost(
@@ -100,7 +99,7 @@ public interface PostApi {
 
     @RequestMapping(
             method = RequestMethod.PATCH,
-            value = "/post/{id}/buy",
+            value = "/posts/{id}/buy",
             produces = { "application/json" }
     )
     ResponseEntity<?> buyPost(
@@ -110,7 +109,7 @@ public interface PostApi {
 
     @RequestMapping(
             method = RequestMethod.POST,
-            value = "/post/{id}/review",
+            value = "/posts/{id}/review",
             produces = { "application/json" }
     )
     ResponseEntity<?> reviewPost(
@@ -121,7 +120,7 @@ public interface PostApi {
 
     @RequestMapping(
             method = RequestMethod.PATCH,
-            value = "/post/{id}/promote",
+            value = "/posts/{id}/promote",
             produces = { "application/json" }
     )
     ResponseEntity<?> promotePost(

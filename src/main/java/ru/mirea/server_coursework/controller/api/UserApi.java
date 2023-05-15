@@ -8,8 +8,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import ru.mirea.server_coursework.exception.WrongIdException;
 import ru.mirea.server_coursework.exception.WrongRSQLQueryException;
 
-import javax.validation.constraints.NotBlank;
-
 /**
  * Описание класса
  */
@@ -17,7 +15,7 @@ public interface UserApi {
 
     @RequestMapping(
             method = RequestMethod.GET,
-            value = "/user/{id}",
+            value = "/users/{id}",
             produces = { "application/json" }
     )
     ResponseEntity<?> getById(
@@ -26,7 +24,7 @@ public interface UserApi {
 
     @RequestMapping(
             method = RequestMethod.GET,
-            value = "/user/{id}/reviews",
+            value = "/users/{id}/reviews",
             produces = { "application/json" }
     )
     ResponseEntity<?> getReviews(
@@ -35,7 +33,7 @@ public interface UserApi {
 
     @RequestMapping(
             method = RequestMethod.GET,
-            value = "/user/{id}/posts",
+            value = "/users/{id}/posts",
             produces = { "application/json" }
     )
     ResponseEntity<?> getPosts(

@@ -10,6 +10,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AuthResponseDTO {
+    Long id;
     String username;
-    String token;
+    String accessToken;
+    String refreshToken;
+    String role;
 }

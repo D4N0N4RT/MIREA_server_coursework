@@ -17,7 +17,8 @@ import java.util.List;
 
 @Component
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE,
-        componentModel = "spring")
+        componentModel = "spring",
+        uses = {UserMapper.class})
 public interface PostMapper {
 
     @Mapping(target = "sellerEmail", source = "post.user.username")
@@ -26,11 +27,10 @@ public interface PostMapper {
     @Mapping(target = "sellerEmail", source = "post.user.username")
     List<ShortPostDTO> toShortPostDto(Collection<Post> posts);
 
-    @Mapping(target = "sellerEmail", source = "post.user.username")
-    @Mapping(target = "sellerRating", source = "post.sellerRating")
+    @Mapping(target = "seller", source = "post.user")
     FullPostDTO toFullPostDto(Post post);
 
-    @Mapping(target = "sellerEmail", source = "post.user.username")
+    @Mapping(target = "seller", source = "post.user")
     List<FullPostDTO> toFullPostDto(Collection<Post> posts);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

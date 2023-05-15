@@ -38,7 +38,7 @@ public class UserController implements UserApi {
         User user = userService.getById(id);
         List<ShortPostDTO> postDTOList = postMapper.toShortPostDto(user.getPosts());
         GetUserDTO dto = userMapper.toUserDto(user, postDTOList);
-        return new ResponseEntity<>(dto, HttpStatus.FOUND);
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     @Override
@@ -46,10 +46,10 @@ public class UserController implements UserApi {
         User user = userService.getById(id);
         if (Objects.equals(option, "received")) {
             List<ReviewDTO> response = reviewService.getAllByPostAuthor(user);
-            return new ResponseEntity<>(response, HttpStatus.FOUND);
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } else if (Objects.equals(option, "written")) {
             List<ReviewDTO> response = reviewService.getAllByAuthor(user);
-            return new ResponseEntity<>(response, HttpStatus.FOUND);
+            return new ResponseEntity<>(response, HttpStatus.OK);
         }
         return new ResponseEntity<>("Неправильный запрос", HttpStatus.BAD_REQUEST);
     }
@@ -58,6 +58,6 @@ public class UserController implements UserApi {
     public ResponseEntity<?> getPosts(long id, boolean sold) throws WrongIdException, WrongRSQLQueryException {
         User user = userService.getById(id);
         List<ShortPostDTO> posts = postService.findAllByUserAndSold(user, sold);
-        return new ResponseEntity<>(posts, HttpStatus.FOUND);
+        return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 }

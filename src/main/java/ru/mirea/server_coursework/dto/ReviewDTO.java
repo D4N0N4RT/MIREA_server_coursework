@@ -13,11 +13,13 @@ import java.time.LocalDateTime;
 @Builder
 public class ReviewDTO {
 
-    private String reviewAuthor;
+    private Long id;
 
-    private Long postId;
+    private GetUserDTO reviewAuthor;
 
-    private String postAuthor;
+    private ShortPostDTO post;
+
+    private GetUserDTO postAuthor;
 
     private String content;
 

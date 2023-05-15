@@ -1,26 +1,22 @@
 package ru.mirea.server_coursework.model;
 
-public enum Category {
-    ESTATE("Недвижимость"),
-    TRANSPORT("Транспорт"),
-    WORK("Работа"),
-    SERVICE("Услуга"),
-    HOUSEHOLD("Товары для дома"),
-    CLOTHES("Одежда и аксессуары"),
-    ELECTRONICS("Электроника");
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-    private final String name;
+import javax.persistence.*;
 
-    Category(String s) {
-        name = s;
-    }
+@Entity
+@Table(name = "categories")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class Category {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    public boolean equalsName(String otherName) {
-        // (otherName == null) check is not needed because name.equals(null) returns false
-        return name.equals(otherName);
-    }
-
-    public String toString() {
-        return this.name;
-    }
+    private String name;
 }

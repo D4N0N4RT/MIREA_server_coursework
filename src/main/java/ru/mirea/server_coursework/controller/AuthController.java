@@ -12,13 +12,19 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.mirea.server_coursework.controller.api.AuthApi;
 import ru.mirea.server_coursework.dto.AuthRequestDTO;
 import ru.mirea.server_coursework.dto.AuthResponseDTO;
+import ru.mirea.server_coursework.dto.BasicApiResponse;
 import ru.mirea.server_coursework.dto.RegisterUserDTO;
+import ru.mirea.server_coursework.dto.TokenRefreshDTO;
+import ru.mirea.server_coursework.dto.TokenRefreshResponseDTO;
 import ru.mirea.server_coursework.dto.UpdateUserDTO;
 import ru.mirea.server_coursework.exception.DuplicateUsernameException;
 import ru.mirea.server_coursework.exception.PasswordCheckException;
+import ru.mirea.server_coursework.exception.TokenRefreshException;
 import ru.mirea.server_coursework.mapper.UserMapper;
+import ru.mirea.server_coursework.model.RefreshToken;
 import ru.mirea.server_coursework.model.User;
 import ru.mirea.server_coursework.security.JwtTokenProvider;
+import ru.mirea.server_coursework.service.RefreshTokenService;
 import ru.mirea.server_coursework.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,8 +39,10 @@ public class AuthController implements AuthApi {
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
+    private final RefreshTokenService refreshTokenService;
 
-    public ResponseEntity<?> register(@RequestBody @Valid RegisterUserDTO userDTO) throws DuplicateUsernameException, PasswordCheckException {
+    public ResponseEntity<?> register(@RequestBody @Valid RegisterUserDTO userDTO) throws DuplicateUsernameException,
+            PasswordCheckException {
         try {
             userService.loadUserByUsername(userDTO.getUsername());
             throw new DuplicateUsernameException("Данная почта уже используется для другого аккаунта");
@@ -42,8 +50,10 @@ public class AuthController implements AuthApi {
             userService.checkDTO(userDTO);
             User user = userDTO.toUser();
             user.setPassword(passwordEncoder.encode(user.getPassword()));
+            user.setRating(0.0f);
             userService.create(user);
-            return new ResponseEntity<>("Вы успешно зарегистрировались в системе", HttpStatus.OK);
+            return new ResponseEntity<>(new BasicApiResponse(200,"Вы успешно зарегистрировались в системе"),
+                    HttpStatus.OK);
         }
     }
 
@@ -52,8 +62,13 @@ public class AuthController implements AuthApi {
         manager.authenticate(new UsernamePasswordAuthenticationToken(username, request.getPassword()));
         User user = (User) userService.loadUserByUsername(request.getUsername());
         String token = jwtTokenProvider.generateToken(user);
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
         AuthResponseDTO response = AuthResponseDTO.builder()
-                .username(user.getUsername()).token(token)
+                .id(user.getId())
+                .username(user.getUsername())
+                .accessToken(token)
+                .refreshToken(refreshToken.getToken())
+                .role(user.getRole().toString())
                 .build();
         return ResponseEntity.ok(response);
     }
@@ -69,11 +84,22 @@ public class AuthController implements AuthApi {
             user.setPassword(pass);
         }
         userService.update(user);
-        return new ResponseEntity<>("Данные вашего профиля обновлены", HttpStatus.OK);
+        return new ResponseEntity<>(new BasicApiResponse(200, "Данные вашего профиля обновлены"), HttpStatus.OK);
     }
 
-    /*public void logout(HttpServletRequest request, HttpServletResponse response) {
-        SecurityContextLogoutHandler handler = new SecurityContextLogoutHandler();
-        handler.logout(request, response, null);
-    }*/
+    public ResponseEntity<?> refreshToken(@Valid @RequestBody TokenRefreshDTO request) {
+        String requestRefreshToken = request.getRefreshToken();
+
+        System.out.println(requestRefreshToken);
+
+        return refreshTokenService.findByToken(requestRefreshToken)
+                .map(refreshTokenService::verifyExpiration)
+                .map(RefreshToken::getUser)
+                .map(user -> {
+                    String token = jwtTokenProvider.generateToken(user);
+                    return ResponseEntity.ok(new TokenRefreshResponseDTO(token, requestRefreshToken));
+                })
+                .orElseThrow(() -> new TokenRefreshException(requestRefreshToken,
+                        "Refresh token is not in database!"));
+    }
 }

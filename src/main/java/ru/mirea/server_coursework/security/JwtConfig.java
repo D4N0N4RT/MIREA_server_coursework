@@ -17,8 +17,8 @@ public class JwtConfig {
     @Value("${jwt.tokenPrefix}")
     private String tokenPrefix;
 
-    @Value("${jwt.tokenExpiresAfterDays}")
-    private Integer tokenExpiresAfterDays;
+    @Value("${jwt.accessTokenExpirationMs}")
+    private Integer tokenExpirationMs;
 
     @Bean
     public SecretKey getSecretKeyBean() {

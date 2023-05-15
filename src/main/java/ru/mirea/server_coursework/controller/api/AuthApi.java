@@ -7,12 +7,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import ru.mirea.server_coursework.dto.AuthRequestDTO;
 import ru.mirea.server_coursework.dto.RegisterUserDTO;
+import ru.mirea.server_coursework.dto.TokenRefreshDTO;
 import ru.mirea.server_coursework.dto.UpdateUserDTO;
 import ru.mirea.server_coursework.exception.DuplicateUsernameException;
 import ru.mirea.server_coursework.exception.PasswordCheckException;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 /**
@@ -21,7 +21,7 @@ import javax.validation.Valid;
 public interface AuthApi {
     @RequestMapping(
             method = RequestMethod.POST,
-            value = "/auth/register",
+            value = "/auth/registration",
             produces = { "application/json" }
     )
     ResponseEntity<?> register(
@@ -46,12 +46,11 @@ public interface AuthApi {
             HttpServletRequest request
     ) throws PasswordCheckException;
 
-    /*@RequestMapping(
+    @RequestMapping(
             method = RequestMethod.POST,
-            value = "/auth/logout"
+            value = "/auth/refresh",
+            produces = { "application/json" }
     )
-    void logout(
-            HttpServletRequest request,
-            HttpServletResponse response
-    );*/
+    ResponseEntity<?> refreshToken(@Valid @RequestBody TokenRefreshDTO request);
+
 }
