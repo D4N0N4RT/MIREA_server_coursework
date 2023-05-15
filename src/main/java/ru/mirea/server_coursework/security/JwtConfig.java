@@ -18,7 +18,7 @@ public class JwtConfig {
     private String tokenPrefix;
 
     @Value("${jwt.accessTokenExpirationMs}")
-    private Integer tokenExpirationMs;
+    private Long tokenExpirationMs;
 
     @Bean
     public SecretKey getSecretKeyBean() {

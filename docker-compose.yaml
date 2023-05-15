@@ -18,10 +18,8 @@ services:
       timeout: 5s
       retries: 5
   app:
-    image: adoptopenjdk:11-jre-hotspot
-    volumes:
-      - ./app/server_coursework-0.1.jar:/app.jar
-    command: java -jar app.jar
+    build:
+      context: .
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/courseworkDB
       - SPRING_DATASOURCE_USERNAME=db_user

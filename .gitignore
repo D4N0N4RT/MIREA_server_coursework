@@ -38,4 +38,4 @@ mvnw
 mvnw.cmd
 
 **/*.jar
-**/db_data
+db_data
