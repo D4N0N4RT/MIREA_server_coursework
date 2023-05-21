@@ -18,6 +18,7 @@ services:
       timeout: 5s
       retries: 5
   app:
+    container_name: coursework_spring
     build:
       context: .
     environment:
@@ -30,3 +31,14 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+#  react:
+#    container_name: coursework_react
+#    build: ../post_service_frontend
+#    ports:
+#      - "3000:3000"
+#    restart: always
+#    volumes:
+#      - ../post_service_frontend/src:/src/app/src
+#    links:
+#      - postgres
+#      - app
